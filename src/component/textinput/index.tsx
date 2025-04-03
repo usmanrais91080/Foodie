@@ -21,8 +21,8 @@ const Input: FC<TInputProps> = ({
   label
 }) => {
   return (
-    <View>
-      <Text>{label}</Text>
+    <View style={{width:'100%'}}>
+      <Text style={styles.label}>{label}</Text>
       <Controller
         control={control}
         name={name || ''}
@@ -35,7 +35,8 @@ const Input: FC<TInputProps> = ({
               onChangeText={onChange}
               onBlur={onBlur}
               keyboardType={keyboardType}
-              style={styles.input}
+              placeholderTextColor={'#000000'}
+              style={[styles.input,{fontSize:12}]}
             />
             {error && <Text style={styles.errorText}>{error.message}</Text>}
           </>
@@ -57,12 +58,16 @@ const styles = StyleSheet.create({
   input: {
     width: '100%',
     marginBottom: 5,
-    backgroundColor: themestyles.COLOR_GREY,
+    backgroundColor: themestyles.LIGHT_GREY,
     fontSize: 16,
     lineHeight: 19.36,
     fontWeight: '400',
     paddingHorizontal: 10, 
     height: 40,
-    borderRadius:5
+    borderRadius:5,
   },
+  label:{
+    fontSize:12,
+    fontWeight:"500"
+  }
 });

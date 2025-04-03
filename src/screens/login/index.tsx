@@ -1,4 +1,10 @@
-import {View, Text, StyleSheet, Image, TextInput} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+} from 'react-native';
 import React from 'react';
 import images from '../../assets';
 import themestyles from '../../assets/styles/themestyles';
@@ -8,27 +14,45 @@ import {z} from 'zod';
 import {zodResolver} from '@hookform/resolvers/zod';
 
 const Login = () => {
+
   const LoginSchema = z.object({
     email: z.string().email(),
     password: z.string().min(6),
   });
 
   type FormValue = z.infer<typeof LoginSchema>;
-  const {control} = useForm<FormValue>({
+  const {control, handleSubmit} = useForm<FormValue>({
     defaultValues: {
       email: '',
       password: '',
     },
     resolver: zodResolver(LoginSchema),
   });
+  const onSubmit = data => {
+    console.log(data);
+  };
   return (
     <View style={styles.container}>
       <Image source={images.logo} style={styles.logo} />
       <View style={styles.formContainer}>
         <Text style={styles.title}>Login</Text>
-        <Input placeholder="sdfsdfsd" control={control} name="email" label='khjk' />
-        <Input placeholder="sdfsdfsd" control={control} name="password" label='khjk' />
-        <Button/>
+        <Input
+          placeholder="sdfsdfsd"
+          control={control}
+          name="email"
+          label="Email"
+          keyboardType="email-address"
+        />
+        <Input
+          placeholder="sdfsdfsd"
+          control={control}
+          name="password"
+          label="Password"
+        />
+        <TouchableOpacity style={{justifyContent: 'flex-end'}}>
+          <Text>Forgot Password?</Text>
+        </TouchableOpacity>
+        <Button title="Login" onPress={handleSubmit(onSubmit)} />
       </View>
     </View>
   );

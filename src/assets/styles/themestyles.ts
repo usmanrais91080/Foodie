@@ -1,6 +1,7 @@
 import { Dimensions } from "react-native";
 
 export default{
+    PRIMARY:'#EC2578',
     COLOR_WHITE: '#FFFFFF',
     OPAC_COLOR: 'rgba(255,255,255,0.20)',
     WHITE_OPAC_10: 'rgba(255,255,255,0.10)',
@@ -14,12 +15,10 @@ export default{
     OUT_BLACK: ' #222222',
     PROFILE_CARD_BLACK: '#2B2B2B',
     WHEELPICKER_SLECTED_ITEM: '#38393A',
-    PRIMARY: '#FF6C44',
     SECONDARY: '#FFA987',
     TERTIARY: '#FFD7C2',
     QUATERNARY: '#FFEEE8',
     COLOR_GREY: '#838383',
-    LIGHT_GREY: '#E5E5E5',
     LIGHT_GREY2: '#D9D9D9',
     LIGHT_GREY3: '#C9C9C9',
     LIGHT_GREY4: '#CBCBCB',
@@ -33,6 +32,7 @@ export default{
     DARK_GREY_CONSENT_MODAL: '#a19e9e',
     JET_BLACK: '#1a1a1a',
     LIGHT_BLACK: '#1d1d1d',
+    LIGHT_GREY: '#EDEDED',
     GOLDEN: '#CBB699',
     TRANSPARENT: 'transparent',
     SCREEN_WIDTH: Dimensions.get('window').width,
