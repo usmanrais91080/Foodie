@@ -10,7 +10,7 @@ const Button = ({title,onPress}:TButtonProps) => {
   return (
     <View style={{width:"100%"}}>
       <TouchableOpacity style={styles.container} onPress={onPress}>
-        <Text>{title}</Text>
+        <Text style={styles.titleText}>{title}</Text>
         </TouchableOpacity>
     </View>
   )
@@ -27,6 +27,11 @@ const styles = StyleSheet.create({
         justifyContent:'center',
         borderRadius:5,
         marginBottom:20,
-        marginTop:40
+        marginTop:30
+    },
+    titleText:{
+      fontSize:15,
+      color:themestyles.COLOR_WHITE,
+      fontWeight:'500'
     }
 })

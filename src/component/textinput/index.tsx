@@ -1,6 +1,6 @@
-import { StyleSheet, Text, TextInput, View } from 'react-native';
-import React, { FC } from 'react';
-import { Controller, Control, FieldValues } from 'react-hook-form';
+import {StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-native';
+import React, {FC} from 'react';
+import {Controller, Control, FieldValues} from 'react-hook-form';
 import themestyles from '../../assets/styles/themestyles';
 
 type TInputProps = {
@@ -8,8 +8,12 @@ type TInputProps = {
   control?: Control<FieldValues>;
   name?: string;
   keyboardType?: 'default' | 'email-address' | 'numeric' | 'phone-pad';
-  rules?: object; 
+  rules?: object;
   label?: string;
+  secureTextEntry?: boolean;
+  leftIcon?: React.ReactNode;
+  rightIcon?: React.ReactNode;
+  onPress?: () => void;
 };
 
 const Input: FC<TInputProps> = ({
@@ -18,26 +22,35 @@ const Input: FC<TInputProps> = ({
   rules,
   placeholder,
   keyboardType,
-  label
+  label,
+  leftIcon,
+  rightIcon,
+  secureTextEntry,
+  onPress,
 }) => {
   return (
-    <View style={{width:'100%'}}>
+    <View style={{width: '100%'}}>
       <Text style={styles.label}>{label}</Text>
       <Controller
         control={control}
         name={name || ''}
         rules={rules}
-        render={({ field: { value, onChange, onBlur }, fieldState: { error } }) => (
+        render={({field: {value, onChange, onBlur}, fieldState: {error}}) => (
           <>
-            <TextInput
-              placeholder={placeholder}
-              value={value}
-              onChangeText={onChange}
-              onBlur={onBlur}
-              keyboardType={keyboardType}
-              placeholderTextColor={'#000000'}
-              style={[styles.input,{fontSize:12}]}
-            />
+            <View style={styles.inputContainer}>
+              {leftIcon && <View style={{paddingRight:10}}>{leftIcon}</View>}
+              <TextInput
+                placeholder={placeholder}
+                value={value}
+                onChangeText={onChange}
+                onBlur={onBlur}
+                secureTextEntry={secureTextEntry}
+                keyboardType={keyboardType}
+                placeholderTextColor={'#000000'}
+                style={[styles.input, {fontSize: 12}]}
+              />
+              {rightIcon && <TouchableOpacity onPress={onPress}>{rightIcon}</TouchableOpacity>}
+            </View>
             {error && <Text style={styles.errorText}>{error.message}</Text>}
           </>
         )}
@@ -51,23 +64,29 @@ export default Input;
 const styles = StyleSheet.create({
   errorText: {
     color: 'red',
-    marginTop: 8,
+    marginTop: 4,
     fontSize: 10,
     textAlign: 'center',
   },
-  input: {
+  inputContainer: {
     width: '100%',
-    marginBottom: 5,
+    marginBottom: 8,
     backgroundColor: themestyles.LIGHT_GREY,
     fontSize: 16,
     lineHeight: 19.36,
     fontWeight: '400',
-    paddingHorizontal: 10, 
+    paddingHorizontal: 10,
     height: 40,
-    borderRadius:5,
+    borderRadius: 5,
+    marginTop: 5,
+    alignItems: 'center',
+    flexDirection: 'row',
   },
-  label:{
-    fontSize:12,
-    fontWeight:"500"
-  }
+  input: {
+    flex: 1,
+  },
+  label: {
+    fontSize: 12,
+    fontWeight: '500',
+  },
 });
