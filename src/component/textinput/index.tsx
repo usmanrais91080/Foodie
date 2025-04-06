@@ -1,4 +1,11 @@
-import {StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+  ViewStyle,
+} from 'react-native';
 import React, {FC} from 'react';
 import {Controller, Control, FieldValues} from 'react-hook-form';
 import themestyles from '../../assets/styles/themestyles';
@@ -28,6 +35,11 @@ const Input: FC<TInputProps> = ({
   secureTextEntry,
   onPress,
 }) => {
+  const dynamicInputStyle = {
+    marginTop: label ? 5 : 0,
+    marginBottom: label ? 8 : 0,
+  } as ViewStyle;
+
   return (
     <View style={{width: '100%'}}>
       <Text style={styles.label}>{label}</Text>
@@ -37,8 +49,8 @@ const Input: FC<TInputProps> = ({
         rules={rules}
         render={({field: {value, onChange, onBlur}, fieldState: {error}}) => (
           <>
-            <View style={styles.inputContainer}>
-              {leftIcon && <View style={{paddingRight:10}}>{leftIcon}</View>}
+            <View style={[styles.inputContainer, dynamicInputStyle]}>
+              {leftIcon && <View style={{paddingRight: 10}}>{leftIcon}</View>}
               <TextInput
                 placeholder={placeholder}
                 value={value}
@@ -49,7 +61,11 @@ const Input: FC<TInputProps> = ({
                 placeholderTextColor={'#000000'}
                 style={[styles.input, {fontSize: 12}]}
               />
-              {rightIcon && <TouchableOpacity onPress={onPress}>{rightIcon}</TouchableOpacity>}
+              {rightIcon && (
+                <TouchableOpacity onPress={onPress}>
+                  {rightIcon}
+                </TouchableOpacity>
+              )}
             </View>
             {error && <Text style={styles.errorText}>{error.message}</Text>}
           </>
@@ -70,7 +86,6 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     width: '100%',
-    marginBottom: 8,
     backgroundColor: themestyles.LIGHT_GREY,
     fontSize: 16,
     lineHeight: 19.36,
@@ -78,9 +93,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     height: 40,
     borderRadius: 5,
-    marginTop: 5,
     alignItems: 'center',
     flexDirection: 'row',
+    alignSelf: 'center',
   },
   input: {
     flex: 1,

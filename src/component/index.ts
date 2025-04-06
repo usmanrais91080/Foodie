@@ -1,3 +1,5 @@
 import Input from "./textinput";
 import Button from "./button";
-export {Input,Button}
+import Header from "./header";
+
+export {Input,Button,Header}
