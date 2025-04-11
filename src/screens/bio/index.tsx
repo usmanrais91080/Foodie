@@ -7,7 +7,14 @@ import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import themestyles from '../../assets/styles/themestyles';
 import CountryPicker from '../../component/country-picker';
+import {StackNavigationProp} from '@react-navigation/stack';
+import {useNavigation} from '@react-navigation/native';
 
+type AuthStackParamList = {
+  PaymentScreen: undefined;
+};
+
+type NavigationProps = StackNavigationProp<AuthStackParamList>;
 const BioScreen = () => {
   const bioSchema = z.object({
     fullName: z.string().optional(),
@@ -33,6 +40,8 @@ const BioScreen = () => {
     },
     resolver: zodResolver(bioSchema),
   });
+
+  const navigation = useNavigation<NavigationProps>();
   return (
     <View style={styles.container}>
       <Header />
@@ -55,10 +64,9 @@ const BioScreen = () => {
           leftIcon={<Icon name="call" size={20} />}
         />
       </View>
-      <View style={{flex:0.9}}/>
+      <View style={{flex: 0.9}} />
       <View style={{width: '90%', alignSelf: 'center'}}>
-
-      <Button title='Next'/>
+        <Button title="Next" onPress={()=>navigation.navigate('PaymentScreen')}/>
       </View>
     </View>
   );
