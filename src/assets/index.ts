@@ -4,6 +4,9 @@ google: require('./icons/google.png'),
 facebook: require('./icons/facebook.png'),
 payPal: require('./icons/paypal.png'),
 payoneer: require('./icons/Payoneer.png'),
-visa: require('./icons/visa.png')
+visa: require('./icons/visa.png'),
+galleryIcon: require('./icons/galleryIcon.png'),
+locaionIcon:require('./icons/location-icon.png'),
+congratesIcon:require('./icons/congratesIcon.png'),
 }
 export default images

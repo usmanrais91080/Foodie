@@ -15,7 +15,7 @@ import images from '../../assets';
 
 type AuthStackParamList = {
   BioScreen: undefined;
-  UploadProfilePhoto: undefined;
+  ProfileImage: undefined;
 };
 
 type CardItem = {
@@ -79,7 +79,10 @@ const PaymentScreen = () => {
         renderItem={({item, index}) => renderItems(item, index)}
       />
       <View style={{width: '90%', alignSelf: 'center', marginBottom: 30}}>
-        <Button title="Next" />
+        <Button
+          title="Next"
+          onPress={() => navigation.navigate('ProfileImage')}
+        />
       </View>
     </View>
   );
