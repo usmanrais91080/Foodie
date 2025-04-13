@@ -49,7 +49,7 @@ const Input: FC<TInputProps> = ({
         rules={rules}
         render={({field: {value, onChange, onBlur}, fieldState: {error}}) => (
           <>
-            <View style={[styles.inputContainer, dynamicInputStyle]}>
+            <View style={[styles.inputContainer,dynamicInputStyle]}>
               {leftIcon && <View style={{paddingRight: 10}}>{leftIcon}</View>}
               <TextInput
                 placeholder={placeholder}

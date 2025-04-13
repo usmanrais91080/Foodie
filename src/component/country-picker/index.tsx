@@ -1,171 +1,72 @@
-// import React, { useState } from 'react';
-// import {
-//   View, Text, Modal, TouchableOpacity, FlatList, StyleSheet
-// } from 'react-native';
-// import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-// import themestyles from '../../assets/styles/themestyles';
-// // Define the list of countries
-// const COUNTRY_LIST = ['Pakistan', 'India', 'USA', 'Canada', 'Germany'];
-
-// type CountryPickerProps = {
-//   selectedCountry?: string;
-//   onSelect: (country: string) => void;
-// };
-
-// const CountryPicker: React.FC<CountryPickerProps> = ({ selectedCountry, onSelect }) => {
-//   const [modalVisible, setModalVisible] = useState(false);
-//   const [selected, setSelected] = useState<string | null>(selectedCountry || null);
-
-//   const handleSelect = (country: string) => {
-//     setSelected(country); // Set selected country
-//     onSelect(country); // Pass the selected country to parent
-//     setModalVisible(false); // Close modal
-//   };
-
-//   return (
-//     <View>
-//       {/* Touchable input that opens the modal */}
-//       <TouchableOpacity style={styles.input} onPress={() => setModalVisible(true)}>
-//         <Text style={selected ? styles.selectedText : styles.placeholderText}>
-//           {selected || 'Select Country'}
-//         </Text>
-//         <MaterialIcons name="arrow-drop-down" size={24} color="black" />
-//       </TouchableOpacity>
-
-//       {/* Modal for country selection */}
-//       <Modal visible={modalVisible} animationType="slide" transparent>
-//         <View style={styles.modalContainer}>
-//           <View style={styles.modalContent}>
-//             <Text style={styles.modalTitle}>Select Country</Text>
-//             <FlatList
-//               data={COUNTRY_LIST}
-//               keyExtractor={(item) => item}
-//               renderItem={({ item }) => (
-//                 <TouchableOpacity
-//                   style={[styles.countryItem, selected === item && styles.selectedItem]}
-//                   onPress={() => handleSelect(item)}
-//                 >
-//                   <Text style={styles.countryText}>{item}</Text>
-//                 </TouchableOpacity>
-//               )}
-//             />
-//             <TouchableOpacity style={styles.closeButton} onPress={() => setModalVisible(false)}>
-//               <Text style={styles.closeText}>Close</Text>
-//             </TouchableOpacity>
-//           </View>
-//         </View>
-//       </Modal>
-//     </View>
-//   );
-// };
-
-// export default CountryPicker;
-
-// const styles = StyleSheet.create({
-//   input: {
-//     width: '100%',
-//     height: 45,
-//     backgroundColor: themestyles.LIGHT_GREY,
-//     borderRadius: 5,
-//     flexDirection: 'row',
-//     alignItems: 'center',
-//     justifyContent: 'space-between',
-//     paddingHorizontal: 10,
-//   },
-//   placeholderText: {
-//     color: 'gray',
-//   },
-//   selectedText: {
-//     color: 'black',
-//     fontWeight: 'bold',
-//   },
-//   modalContainer: {
-//     flex: 1,
-//     backgroundColor: 'rgba(0,0,0,0.5)',
-//     justifyContent: 'center',
-//     alignItems: 'center',
-//   },
-//   modalContent: {
-//     width: '80%',
-//     backgroundColor: 'white',
-//     borderRadius: 10,
-//     padding: 20,
-//     alignItems: 'center',
-//   },
-//   modalTitle: {
-//     fontSize: 18,
-//     fontWeight: 'bold',
-//     marginBottom: 15,
-//   },
-//   countryItem: {
-//     width: '100%',
-//     padding: 15,
-//     borderBottomWidth: 1,
-//     borderBottomColor: '#ddd',
-//     alignItems: 'center',
-//   },
-//   selectedItem: {
-//     backgroundColor: 'red', // Highlight selected country
-//   },
-//   countryText: {
-//     fontSize: 16,
-//   },
-//   closeButton: {
-//     marginTop: 15,
-//     backgroundColor: 'black',
-//     padding: 10,
-//     borderRadius: 5,
-//   },
-//   closeText: {
-//     color: 'white',
-//     fontWeight: 'bold',
-//   },
-// });
-
 import {
   FlatList,
   Modal,
   StyleSheet,
   Text,
+  TextInput,
   TouchableOpacity,
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import themestyles from '../../assets/styles/themestyles';
-import Input from '../textinput';
-import {z} from 'zod';
-import {useForm} from 'react-hook-form';
-import {zodResolver} from '@hookform/resolvers/zod';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import {TextInput} from 'react-native-gesture-handler';
-
-type TCountryProps = {
-  title: string;
-  onPress?: () => void;
-  letfIcon: React.ReactNode;
-  rightIcon: React.ReactNode;
-};
 
 const COUNTRIES = ['Pakistan', 'United States', 'Dubai', 'Australia'];
-const CountryPicker = ({title, onPress}: TCountryProps) => {
-  const [showModal, setShowModal] = useState<boolean>(true);
-  const [countryList, setCountryList] = useState<Array<string>>([]);
-  const [selectedCountry, setSelectedCountry] = useState<string | null>(null);
+const CountryPicker = () => {
+  const [showModal, setShowModal] = useState(false);
+  const [countryList, setCountryList] = useState([]);
+  const [selectedCountry, setSelectedCountry] = useState();
   const [searchQuery, setSearchQuery] = useState('');
+  const [debounceSearch, setDebounceSearch] = useState('');
 
-  const searchSchema = z.object({
-    search: z.string().optional(),
-  });
+  const renderItemList = (item, index) => {
+    return (
+      <TouchableOpacity
+        style={[
+          styles.textContainer,
+          {
+            backgroundColor:
+              selectedCountry == item ? themestyles.LIGHT_GREY2 : undefined,
+          },
+        ]}
+        onPress={() => {
+          setSelectedCountry(item);
+          setShowModal(false);
+        }}>
+        <Text
+          style={[
+            styles.countryText,
+            {fontWeight: selectedCountry === item ? '700' : undefined},
+          ]}>
+          {item}
+        </Text>
+      </TouchableOpacity>
+    );
+  };
 
-  type FormValue = z.infer<typeof searchSchema>;
+  // useEffect(
+  //   function handleDebounceSearch() {
+  //     if (debounceSearch === '') {
+  //       setCountryList(COUNTRIES);
+  //     } else {
+  //       const filtered = COUNTRIES.filter(item =>
+  //         item.toLowerCase().includes(debounceSearch.toLowerCase()),
+  //       );
+  //       setCountryList(filtered);
+  //     }
+  //   },
+  //   [debounceSearch],
+  // );
 
-  const {handleSubmit, control} = useForm<FormValue>({
-    defaultValues: {
-      search: '',
-    },
-    resolver: zodResolver(searchSchema),
-  });
+  // useEffect(function clearDebounce(){
+  //   const handler=setTimeout(() => {
+  //     setDebounceSearch(searchQuery.trim())
+  //   }, 300);
+  //   return function cleanupTimeout(){
+  //     cleanupTimeout(handler)
+  //   }
+  // },[searchQuery])
 
   useEffect(() => {
     const lowerCase = searchQuery.toLowerCase();
@@ -173,59 +74,43 @@ const CountryPicker = ({title, onPress}: TCountryProps) => {
       COUNTRIES.filter(item => item.toLowerCase().includes(lowerCase)),
     );
   }, [searchQuery]);
+
   return (
-    <View style={{flex: 1}}>
-      <TouchableOpacity style={styles.inputContainer}>
-        <Text>Select Country</Text>
+    <View>
+      <TouchableOpacity
+        style={styles.inputContainer}
+        onPress={() => setShowModal(true)}>
+        <Icon name="flag" size={22} />
+        <Text style={styles.seletectCountryText}>
+          {selectedCountry ?? 'Select Country'}
+        </Text>
       </TouchableOpacity>
       <Modal visible={showModal} animationType="slide" transparent>
         <TouchableWithoutFeedback onPress={() => setShowModal(false)}>
           <View style={styles.modalContainer}>
-            {/* Prevent clicks inside modal from closing it */}
-            <TouchableWithoutFeedback onPress={() => {}}>
-              <View style={styles.modalContent}>
-                {/* Search Input */}
-                <View style={styles.inputContainer}>
-                  <TextInput
-                    placeholder="Search country"
-                    value={searchQuery}
-                    onChangeText={txt => setSearchQuery(txt)}
-                  />
-                </View>
-
-                {/* Country List */}
-                <FlatList
-                  data={countryList}
-                  keyExtractor={item => item}
-                  renderItem={({item}) => (
-                    <TouchableOpacity
-                      style={[
-                        styles.countryContainer,
-                        selectedCountry === item && {
-                          backgroundColor: themestyles.LIGHT_GREY2,
-                        },
-                      ]}
-                      onPress={() => {
-                        setSelectedCountry(item);
-                        // setShowModal(false);
-                      }}>
-                      <Text
-                        style={{fontWeight: selectedCountry === item && '600'}}>
-                        {item}
-                      </Text>
-                    </TouchableOpacity>
-                  )}
+            <View style={styles.modalContent}>
+              <TouchableOpacity style={styles.searchBar}>
+                <Icon name="search" size={20} />
+                <TextInput
+                  placeholder="Search country"
+                  style={styles.input}
+                  placeholderTextColor={themestyles.COLOR_BLACK}
+                  value={searchQuery}
+                  onChangeText={setSearchQuery}
                 />
-              </View>
-            </TouchableWithoutFeedback>
+              </TouchableOpacity>
+              <FlatList
+                data={countryList}
+                renderItem={({item, index}) => renderItemList(item, index)}
+              ListEmptyComponent={<Text style={styles.noCountrText}>No country found</Text>}
+              />
+            </View>
           </View>
         </TouchableWithoutFeedback>
       </Modal>
     </View>
   );
 };
-
-export default CountryPicker;
 
 const styles = StyleSheet.create({
   inputContainer: {
@@ -240,33 +125,56 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'row',
     alignSelf: 'center',
+    marginTop: 15,
   },
   modalContainer: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    justifyContent: 'center',
+    backgroundColor: 'rgba(0,0,0,0.6)',
     alignItems: 'center',
+    justifyContent: 'center',
   },
   modalContent: {
     width: '100%',
+    height: themestyles.SCREEN_HEIGHT * 0.55,
     backgroundColor: themestyles.COLOR_WHITE,
-    height: 500,
     position: 'absolute',
     bottom: 0,
-    borderTopLeftRadius: 15,
-    borderTopRightRadius: 15,
-    elevation: 4,
-    shadowColor: 'black',
-    shadowOffset: {height: 2, width: 3},
-    shadowOpacity: 0.2,
-    overflow: 'hidden',
-    paddingTop: 20,
+    borderTopRightRadius: 20,
+    borderTopLeftRadius: 20,
+    paddingTop: 30,
     paddingHorizontal: 20,
+    overflow: 'hidden',
   },
-  countryContainer: {
-    marginTop: 15,
-    borderRadius: 5,
-    padding: 5,
-    paddingLeft: 5,
+  seletectCountryText: {
+    paddingLeft: 10,
+    fontSize: 12.3,
   },
+  countryText: {
+    fontSize: 15,
+    fontWeight: '500',
+  },
+  textContainer: {marginTop: 10, borderRadius: 5, padding: 8, paddingLeft: 8},
+  searchBar: {
+    backgroundColor: themestyles.LIGHT_GREY2,
+    width: '100%',
+    alignSelf: 'center',
+    height: 40,
+    borderRadius: 20,
+    paddingLeft: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 15,
+  },
+  input: {
+    flex: 1,
+    paddingLeft: 10,
+  },
+  noCountrText:{
+    fontSize:15,
+    fontWeight:'500',
+    alignSelf:'center',
+    marginTop:5
+  }
 });
+
+export default CountryPicker;

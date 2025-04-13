@@ -56,7 +56,7 @@ const BioScreen = () => {
           placeholder="Full Name"
           leftIcon={<Icon name={'person'} size={20} />}
         />
-        {/* <CountryPicker /> */}
+        <CountryPicker />
         <Input
           control={control}
           name="phoneNumber"

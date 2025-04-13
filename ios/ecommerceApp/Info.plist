@@ -35,6 +35,10 @@
 		<key>NSAllowsLocalNetworking</key>
 		<true/>
 	</dict>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>We need your location to show it on the map</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>We need your location to personalize your experience</string>
 	<key>NSCameraUsageDescription</key>
 	<string>We need access to your camera</string>
 	<key>NSPhotoLibraryUsageDescription</key>

@@ -1,21 +1,82 @@
-import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import React from 'react';
-import {useNavigation, useRoute} from '@react-navigation/native';
+import {
+  Alert,
+  Image,
+  PermissionsAndroid,
+  Platform,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {RouteProp, useNavigation, useRoute} from '@react-navigation/native';
 import {Button, Header} from '../../component';
+import {StackNavigationProp} from '@react-navigation/stack';
 import themestyles from '../../assets/styles/themestyles';
 import images from '../../assets';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import {StackNavigationProp} from '@react-navigation/stack';
+import Geolocation from 'react-native-geolocation-service';
 
 type AuthStackParamList = {
   ProfileIsReady: undefined;
+  GoogleMapScreen: undefined;
 };
-
+type MainStackParamList = {
+  Location: {selectedLocation?: string};
+  GoogleMapScreen: undefined;
+};
 type NavigationProps = StackNavigationProp<AuthStackParamList>;
 const Location = () => {
-  const route = useRoute();
-  const {uri} = route.params;
   const navigation = useNavigation<NavigationProps>();
+  const [userLocation, setUserLocation] = useState<string | null>(null);
+
+  const route = useRoute<RouteProp<MainStackParamList, 'Location'>>();
+
+  const requestLocationPermission = async () => {
+    if (Platform.OS === 'android') {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+      );
+
+      if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
+        Alert.alert('Permission Denied', 'Location permission is required');
+        return false;
+      }
+    } else {
+      // this is for ios permission
+      const auth = await Geolocation.requestAuthorization('whenInUse');
+      if (auth !== 'granted') {
+        Alert.alert('Permission Denied', 'Location permission is required');
+        return false;
+      }
+    }
+    return true;
+  };
+
+  const getLocation = async () => {
+    const hasPermission = await requestLocationPermission();
+    if (!hasPermission) return;
+
+    Geolocation.getCurrentPosition(
+      position => {
+        const {latitude, longitude} = position.coords;
+        const locationString = `Lat:${latitude}, Long:${longitude}`;
+        setUserLocation(locationString);
+        navigation.navigate('GoogleMapScreen');
+      },
+      error => {
+        console.log('Error', error.code, error.message);
+        Alert.alert('Error', 'Could not get location');
+      },
+      {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
+    );
+  };
+  useEffect(() => {
+    if (route.params?.selectedLocation) {
+      setUserLocation(route.params.selectedLocation);
+    }
+  }, [route.params?.selectedLocation]);
+
   return (
     <View style={styles.container}>
       <Header />
@@ -25,16 +86,15 @@ const Location = () => {
       </Text>
       <Image source={images.locaionIcon} style={styles.locationIcon} />
       <View style={styles.locationButton}>
-        <TouchableOpacity style={styles.plus}>
+        <TouchableOpacity style={styles.plus} onPress={getLocation}>
           <Icon name="add" size={20} color="white" />
         </TouchableOpacity>
-        <Text style={styles.locationText}>Set your location</Text>
+        <Text style={styles.locationText}>
+          {userLocation ?? 'Set your location'}
+        </Text>
       </View>
-      <View style={{width: '90%', alignSelf: 'center', marginBottom: 30}}>
-        <Button
-          title="Next"
-          onPress={() => navigation.navigate('ProfileIsReady')}
-        />
+      <View style={styles.buttonContainer}>
+        <Button title="Next" onPress={()=>navigation.navigate('ProfileIsReady')}/>
       </View>
     </View>
   );
@@ -53,6 +113,11 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     color: themestyles.PRIMARY,
     marginTop: 20,
+  },
+  buttonContainer: {
+    width: '90%',
+    alignSelf: 'center',
+    marginTop: themestyles.SCREEN_HEIGHT * 0.12,
   },
   subHeader: {
     marginTop: 30,
