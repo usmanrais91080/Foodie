@@ -8,5 +8,6 @@ visa: require('./icons/visa.png'),
 galleryIcon: require('./icons/galleryIcon.png'),
 locaionIcon:require('./icons/location-icon.png'),
 congratesIcon:require('./icons/congratesIcon.png'),
+promotionBanner: require('./images/Promotion.png')
 }
 export default images

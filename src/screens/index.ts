@@ -7,6 +7,7 @@ import Location from "./location";
 import ProfileIsReady from "./profile-is-ready";
 import GoogleMapScreen from "./google-map-screen";
 import Home from "./home";
+import Search from "./search-screen";
 
 export {
   Login,
@@ -17,5 +18,6 @@ export {
   Location,
   ProfileIsReady,
   GoogleMapScreen,
-  Home
+  Home,
+  Search
 };

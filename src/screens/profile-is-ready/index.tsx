@@ -7,7 +7,7 @@ import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 
 type MainStackNavigation={
-  Home:undefined
+  Main:undefined
 }
 
 type NavigationProps=StackNavigationProp<MainStackNavigation>
@@ -19,7 +19,7 @@ const ProfileIsReady = () => {
       <Text style={styles.congratestext}>Congrats!</Text>
       <Text style={styles.subheader}>Your Profile Is Ready To Use</Text>
       <View style={styles.buttonContainer}>
-        <Button title="Try Order" onPress={()=>navigation.navigate('Home')}/>
+        <Button title="Try Order" onPress={()=>navigation.navigate('Main')}/>
       </View>
     </View>
   );
@@ -55,6 +55,6 @@ const styles = StyleSheet.create({
   buttonContainer: {
     width: '90%',
     alignSelf: 'center',
-    top: themestyles.SCREEN_HEIGHT * 0.25,
+    top: themestyles.SCREEN_HEIGHT * 0.3,
   },
 });

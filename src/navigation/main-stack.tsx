@@ -1,6 +1,7 @@
 import {createStackNavigator} from '@react-navigation/stack';
 import BioScreen from '../screens/bio';
-import {GoogleMapScreen, Home, Location, PaymentScreen, ProfileImage, ProfileIsReady} from '../screens';
+import {GoogleMapScreen, Location, PaymentScreen, ProfileImage, ProfileIsReady, Search} from '../screens';
+import Main from '../screens/main-screen/indesx';
 
 const Stack = createStackNavigator();
 
@@ -13,7 +14,8 @@ const MainStack = () => {
       <Stack.Screen name="Location" component={Location} />
       <Stack.Screen name="ProfileIsReady" component={ProfileIsReady} />
       <Stack.Screen name="GoogleMapScreen" component={GoogleMapScreen} />
-      <Stack.Screen name="Home" component={Home} />
+      <Stack.Screen name="Search" component={Search} />
+      <Stack.Screen name="Main" component={Main} />
     </Stack.Navigator>
   );
 };
