@@ -13,11 +13,12 @@ const ImageCard = ({imageUrl, title, price, onPress}: Props) => {
   return (
     <TouchableOpacity style={styles.imageCardContainer} onPress={onPress}>
       <Image
+      resizeMode='cover'
         source={isRemote ? {uri: imageUrl} : imageUrl}
         style={styles.image}
       />
-      <Text>{title}</Text>
-      <Text>{price}</Text>
+      <Text style={styles.title}>{title.substring(0,15)+'...'}</Text>
+      <Text style={styles.price}>${price}</Text>
     </TouchableOpacity>
   );
 };
@@ -26,13 +27,33 @@ export default ImageCard;
 
 const styles = StyleSheet.create({
   imageCardContainer: {
-    height: 140,
-    width: '40%',
-    alignItems: 'center',
-    borderRadius: 4,
-    padding: 5,
-    backgroundColor:themestyles.SECONDARY,
-
+    height: 150,
+    width: themestyles.SCREEN_WIDTH * 0.4,
+    borderRadius: 7,
+    backgroundColor: themestyles.SECONDARY,
+    shadowColor:'black',
+    shadowOffset:{width:1,height:1.4},
+    shadowOpacity:0.4,
+    shadowRadius:2,
+    elevation:4
   },
-  image:{height: 70, width: 88,resizeMode:'contain'}
+  image: {
+    height: 100,
+    width: themestyles.SCREEN_WIDTH * 0.4,
+    borderRadius: 4,
+  },
+  title:{
+    fontSize:15,
+    justifyContent:'flex-start',
+    paddingLeft:5,
+    marginTop:5,
+    fontWeight:'500',
+    alignSelf:'center'
+  },
+  price:{
+    fontSize:13,
+    fontWeight:'700',
+    alignSelf:'center',
+    marginTop:5
+  }
 });
