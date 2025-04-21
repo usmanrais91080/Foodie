@@ -1,6 +1,7 @@
 import axios from 'axios';
 
 const BASE_URL = 'https://www.themealdb.com/api/json/v1/1/';
+const COUNTRY_API_URL = 'https://countriesnow.space/api/v0.1';
 
 export const asyncGetBurger = async () => {
   try {
@@ -53,7 +54,7 @@ export const asyncGetLambMeal = async () => {
   try {
     const response = await axios.get(`${BASE_URL}/search.php?s=lamb`);
     // adding static price
-    const lambPrice = response.data?.meals?.map((meal:any) => {
+    const lambPrice = response.data?.meals?.map((meal: any) => {
       let price;
       if (meal.strArea === 'Russian') {
         price = 33.99;
@@ -81,5 +82,16 @@ export const asyncGetAllProductsOnSearch = async (search: string) => {
     return responce.data.meal || [];
   } catch (error) {
     console.log('Error fetching search products', error);
+    return []
+  }
+};
+
+export const asyncGetCountries = async () => {
+  try {
+    const response = await axios.get(`${COUNTRY_API_URL}/countries`);
+    console.log('country',response)
+    return response?.data?.data?.map((country)=>country.country)
+  } catch (error) {
+    throw error;
   }
 };

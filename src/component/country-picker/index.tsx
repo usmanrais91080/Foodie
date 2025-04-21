@@ -11,14 +11,16 @@ import {
 import React, {useEffect, useState} from 'react';
 import themestyles from '../../assets/styles/themestyles';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import {useGetCountries} from '../../api/queries';
+import Loader from '../loader';
 
-const COUNTRIES = ['Pakistan', 'United States', 'Dubai', 'Australia'];
 const CountryPicker = () => {
   const [showModal, setShowModal] = useState(false);
   const [countryList, setCountryList] = useState([]);
   const [selectedCountry, setSelectedCountry] = useState();
   const [searchQuery, setSearchQuery] = useState('');
-  const [debounceSearch, setDebounceSearch] = useState('');
+
+  const {data: countriesData, isLoading, error} = useGetCountries();
 
   const renderItemList = (item, index) => {
     return (
@@ -69,11 +71,13 @@ const CountryPicker = () => {
   // },[searchQuery])
 
   useEffect(() => {
+    if (!countriesData) return;
     const lowerCase = searchQuery.toLowerCase();
-    setCountryList(
-      COUNTRIES.filter(item => item.toLowerCase().includes(lowerCase)),
+    const filtered = countriesData.filter((item: string) =>
+      item.toLowerCase().includes(lowerCase),
     );
-  }, [searchQuery]);
+    setCountryList(filtered);
+  }, [searchQuery, countriesData]);
 
   return (
     <View>
@@ -99,11 +103,17 @@ const CountryPicker = () => {
                   onChangeText={setSearchQuery}
                 />
               </TouchableOpacity>
-              <FlatList
-                data={countryList}
-                renderItem={({item, index}) => renderItemList(item, index)}
-              ListEmptyComponent={<Text style={styles.noCountrText}>No country found</Text>}
-              />
+              {isLoading ? (
+                <Loader loading />
+              ) : (
+                <FlatList
+                  data={countryList}
+                  renderItem={({item, index}) => renderItemList(item, index)}
+                  ListEmptyComponent={
+                    <Text style={styles.noCountrText}>No country found</Text>
+                  }
+                />
+              )}
             </View>
           </View>
         </TouchableWithoutFeedback>
@@ -169,12 +179,12 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingLeft: 10,
   },
-  noCountrText:{
-    fontSize:15,
-    fontWeight:'500',
-    alignSelf:'center',
-    marginTop:5
-  }
+  noCountrText: {
+    fontSize: 15,
+    fontWeight: '500',
+    alignSelf: 'center',
+    marginTop: 5,
+  },
 });
 
 export default CountryPicker;
