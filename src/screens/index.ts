@@ -8,6 +8,9 @@ import ProfileIsReady from "./profile-is-ready";
 import GoogleMapScreen from "./google-map-screen";
 import Home from "./home";
 import Search from "./search-screen";
+import Profile from "./profile-screen";
+import Cart from "./cart";
+import Chat from "./chat";
 
 export {
   Login,
@@ -19,5 +22,8 @@ export {
   ProfileIsReady,
   GoogleMapScreen,
   Home,
-  Search
+  Search,
+  Profile,
+  Cart,
+  Chat
 };

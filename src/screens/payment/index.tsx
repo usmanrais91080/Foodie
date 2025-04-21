@@ -1,6 +1,7 @@
 import {
   FlatList,
   Image,
+  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -67,24 +68,27 @@ const PaymentScreen = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <Header onPress={() => navigation.navigate('BioScreen')} />
-      <Text style={styles.header}>Payment Method</Text>
-      <Text style={styles.subHeader}>
-        This data will be displayed in your account profile for security
-      </Text>
-      <FlatList
-        data={CARD_DETAILS}
-        keyExtractor={item => item.id.toString()}
-        renderItem={({item, index}) => renderItems(item, index)}
-      />
-      <View style={{width: '90%', alignSelf: 'center', marginBottom: 30}}>
-        <Button
-          title="Next"
-          onPress={() => navigation.navigate('ProfileImage')}
+    <ScrollView>
+      <View style={styles.container}>
+        <Header onPress={() => navigation.navigate('BioScreen')} />
+        <Text style={styles.header}>Payment Method</Text>
+        <Text style={styles.subHeader}>
+          This data will be displayed in your account profile for security
+        </Text>
+        <FlatList
+          scrollEnabled={false}
+          data={CARD_DETAILS}
+          keyExtractor={item => item.id.toString()}
+          renderItem={({item, index}) => renderItems(item, index)}
         />
+        <View style={{width: '90%', alignSelf: 'center', marginBottom: 30}}>
+          <Button
+            title="Next"
+            onPress={() => navigation.navigate('ProfileImage')}
+          />
+        </View>
       </View>
-    </View>
+    </ScrollView>
   );
 };
 
@@ -101,7 +105,7 @@ const styles = StyleSheet.create({
     fontSize: 30,
     fontWeight: 'bold',
     textAlign: 'center',
-    width: '60%',
+    width: '65%',
     alignSelf: 'center',
   },
   subHeader: {

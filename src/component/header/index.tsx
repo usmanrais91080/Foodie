@@ -32,7 +32,7 @@ export default Header;
 
 const styles = StyleSheet.create({
   container: {
-    paddingTop: themestyles.SCREEN_HEIGHT * 0.08,
+    paddingTop: themestyles.SCREEN_HEIGHT * 0.05,
     paddingHorizontal: 10,
   },
 });

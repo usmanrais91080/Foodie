@@ -5,6 +5,7 @@ import {
   View,
   PermissionsAndroid,
   Platform,
+  ScrollView,
 } from 'react-native';
 import React, {useState} from 'react';
 import themestyles from '../../assets/styles/themestyles';
@@ -46,7 +47,7 @@ const ProfileImage = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <Header />
       <Text style={styles.subHeader}>Upload your photo profile </Text>
       {saveProfileImage.length > 0 ? (
@@ -87,7 +88,7 @@ const ProfileImage = () => {
           }
         />
       </View>
-    </View>
+    </ScrollView>
   );
 };
 

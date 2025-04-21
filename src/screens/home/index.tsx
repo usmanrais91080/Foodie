@@ -13,6 +13,7 @@ import {useGetBurger, useGetSalad, useGetLambData} from '../../api/queries';
 import themestyles from '../../assets/styles/themestyles';
 import images from '../../assets';
 import Loader from '../../component/loader';
+import HomeSkeletonLoader from '../../component/home-skeleton-loader';
 
 const Home = () => {
   const {data: allProducts, isLoading, error} = useGetBurger();
@@ -29,7 +30,7 @@ const Home = () => {
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.container}>
           {isLoading ? (
-            <Loader loading />
+            <HomeSkeletonLoader/>
           ) : (
             <>
               <Text style={styles.titleText}>Find Your Favourite Food</Text>
@@ -149,7 +150,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: themestyles.COLOR_WHITE,
     paddingHorizontal: 15,
-    paddingTop: themestyles.SCREEN_HEIGHT * 0.07,
+    paddingTop: themestyles.SCREEN_HEIGHT * 0.046,
   },
   titleText: {
     fontSize: 32,
