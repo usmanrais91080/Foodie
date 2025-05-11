@@ -1,6 +1,13 @@
 import {createStackNavigator} from '@react-navigation/stack';
 import BioScreen from '../screens/bio';
-import {GoogleMapScreen, Location, PaymentScreen, ProfileImage, ProfileIsReady, Search} from '../screens';
+import {
+  GoogleMapScreen,
+  Location,
+  PaymentScreen,
+  ProfileImage,
+  ProfileIsReady,
+  Search,
+} from '../screens';
 import Main from '../screens/main-screen/indesx';
 
 const Stack = createStackNavigator();

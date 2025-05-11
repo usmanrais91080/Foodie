@@ -1,6 +1,7 @@
 import {
   FlatList,
   Image,
+  Platform,
   ScrollView,
   StyleSheet,
   Text,
@@ -8,11 +9,12 @@ import {
   View,
 } from 'react-native';
 import React, {useState} from 'react';
+
 import {ImageCard, SearchBar} from '../../component';
 import {useGetBurger, useGetSalad, useGetLambData} from '../../api/queries';
+
 import themestyles from '../../assets/styles/themestyles';
 import images from '../../assets';
-import Loader from '../../component/loader';
 import HomeSkeletonLoader from '../../component/home-skeleton-loader';
 
 const Home = () => {
@@ -30,7 +32,7 @@ const Home = () => {
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.container}>
           {isLoading ? (
-            <HomeSkeletonLoader/>
+            <HomeSkeletonLoader />
           ) : (
             <>
               <Text style={styles.titleText}>Find Your Favourite Food</Text>
@@ -150,7 +152,10 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: themestyles.COLOR_WHITE,
     paddingHorizontal: 15,
-    paddingTop: themestyles.SCREEN_HEIGHT * 0.046,
+    paddingTop:
+      Platform.OS === 'ios'
+        ? themestyles.SCREEN_HEIGHT * 0.042
+        : themestyles.SCREEN_HEIGHT * 0.032,
   },
   titleText: {
     fontSize: 32,

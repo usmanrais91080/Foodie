@@ -11,7 +11,7 @@ type Props = {
 const ImageCard = ({imageUrl, title, price, onPress}: Props) => {
   const isRemote = typeof imageUrl === 'string'; // ye is liye use kiya h mtlb agr link h means uri h tu {uri:imageUri} use hoga oor agr require('/assets/image.....') is tra image h tu imageUri simple use hoga
   return (
-    <TouchableOpacity style={styles.imageCardContainer} onPress={onPress}>
+    <TouchableOpacity style={styles.imageCardContainer} onPress={onPress} activeOpacity={0.7}>
       <Image
       resizeMode='cover'
         source={isRemote ? {uri: imageUrl} : imageUrl}
@@ -35,7 +35,8 @@ const styles = StyleSheet.create({
     shadowOffset:{width:1,height:1.4},
     shadowOpacity:0.4,
     shadowRadius:2,
-    elevation:4
+    elevation:4,
+    marginVertical:5
   },
   image: {
     height: 100,
