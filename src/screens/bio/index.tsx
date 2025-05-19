@@ -1,14 +1,18 @@
 import {StyleSheet, Text, View} from 'react-native';
-import React from 'react';
+import React, {useCallback} from 'react';
+
+import {z} from 'zod';
+import {set, useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {useNavigation} from '@react-navigation/native';
+import {StackNavigationProp} from '@react-navigation/stack';
+
 import {Button, Header, Input} from '../../component';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import {z} from 'zod';
-import {useForm} from 'react-hook-form';
-import {zodResolver} from '@hookform/resolvers/zod';
 import themestyles from '../../assets/styles/themestyles';
 import CountryPicker from '../../component/country-picker';
-import {StackNavigationProp} from '@react-navigation/stack';
-import {useNavigation} from '@react-navigation/native';
+import useAsyncStorage from '../../hooks/useAsyncStorage';
+import {MultiSelect} from '../../component/multiple-selector';
 
 type AuthStackParamList = {
   PaymentScreen: undefined;
@@ -17,31 +21,39 @@ type AuthStackParamList = {
 type NavigationProps = StackNavigationProp<AuthStackParamList>;
 const BioScreen = () => {
   const bioSchema = z.object({
-    fullName: z.string().optional(),
-    country: z.object({
-      name: z.string().optional(),
-      code: z.string().optional(),
-    }),
+    fullName: z.string().min(1, {message: 'Full name is required'}),
+    country: z.string().min(1, {message: 'Country is required'}),
     phoneNumber: z.coerce
       .number()
-      .max(99999999999, 'Max number allowed')
-      .optional(),
+      .min(1000000000, 'Please enter phone number')
+      .max(9999999999, 'Please enter valid phone number')
+      .refine(val => val.toString().length === 10, {
+        message: 'Phone number must be 10 digits',
+      }),
   });
   type FormValues = z.infer<typeof bioSchema>;
 
-  const {handleSubmit, control} = useForm<FormValues>({
+  const {handleSubmit, control, setValue} = useForm<FormValues>({
     defaultValues: {
       fullName: '',
-      country: {
-        name: '',
-        code: '',
-      },
+      country: '',
       phoneNumber: 0,
     },
     resolver: zodResolver(bioSchema),
   });
 
   const navigation = useNavigation<NavigationProps>();
+  const storeBioLocalData = useAsyncStorage('bio');
+
+  // yhna hum form ka data mmkv me store kr rh hn
+  const handleOnSubmit = useCallback(
+    (formData: FormValues) => {
+      storeBioLocalData(formData);
+      navigation.navigate('PaymentScreen');
+    },
+    [navigation, storeBioLocalData],
+  );
+
   return (
     <View style={styles.container}>
       <Header />
@@ -56,7 +68,13 @@ const BioScreen = () => {
           placeholder="Full Name"
           leftIcon={<Icon name={'person'} size={20} />}
         />
-        <CountryPicker />
+        <CountryPicker
+          name="country"
+          control={control}
+          // label="Country"
+          placeholder="Select Country"
+          setValue={setValue}
+        />
         <Input
           control={control}
           name="phoneNumber"
@@ -66,7 +84,7 @@ const BioScreen = () => {
       </View>
       <View style={{flex: 0.9}} />
       <View style={{width: '90%', alignSelf: 'center'}}>
-        <Button title="Next" onPress={()=>navigation.navigate('PaymentScreen')}/>
+        <Button title="Next" onPress={handleSubmit(handleOnSubmit)} />
       </View>
     </View>
   );

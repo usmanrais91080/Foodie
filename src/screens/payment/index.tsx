@@ -1,18 +1,11 @@
-import {
-  FlatList,
-  Image,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import React, {useState} from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
+import { FlatList, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View, ViewStyle } from 'react-native';
 import themestyles from '../../assets/styles/themestyles';
-import {Button, Header} from '../../component';
-import {useNavigation} from '@react-navigation/native';
-import {StackNavigationProp} from '@react-navigation/stack';
+import { Button, Header } from '../../component';
+import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
 import images from '../../assets';
+import { useToast } from '../../component/toast';
 
 type AuthStackParamList = {
   BioScreen: undefined;
@@ -25,9 +18,11 @@ type CardItem = {
 };
 
 type NavigationProps = StackNavigationProp<AuthStackParamList>;
+
 const PaymentScreen = () => {
-  const [selectedCard, setSelectedCard] = useState<null>(null);
+  const [selectedCard, setSelectedCard] = useState<null | number>(null);
   const navigation = useNavigation<NavigationProps>();
+  const { showToast } = useToast();
 
   const CARD_DETAILS: CardItem[] = [
     {
@@ -44,25 +39,46 @@ const PaymentScreen = () => {
     },
   ];
 
-  const handleSelectedCard = item => {
-    setSelectedCard(item.id);
+  const handleSelectedCard = (id: number) => {
+    setSelectedCard(id);
   };
-  const renderItems = (item: CardItem) => {
+
+  const handleOnPress = useCallback(() => {
+    if (selectedCard === null) {
+      showToast({
+        type: 'error',
+        message: 'Please select a payment method',
+      });
+      return;
+    }
+    navigation.navigate('ProfileImage');
+  }, [selectedCard, navigation, showToast]);
+
+  useEffect(() => {
+  }, [selectedCard]); 
+
+  const renderItems = ({ item }: { item: CardItem }) => {
+    const isSelected = selectedCard === item.id;
+
+    const cardStyle: ViewStyle = {
+      borderColor: isSelected ? themestyles.PRIMARY : '#cccc',
+      borderWidth: isSelected ? 0.9 : 0.4,
+      width: '70%',
+      height: 140,
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderRadius: 10,
+      marginVertical: 10,
+      marginHorizontal: 20,
+      alignSelf: 'center',
+    };
+
     return (
       <TouchableOpacity
-        style={[
-          styles.cardIconContainer,
-          {
-            borderColor:
-              selectedCard === item.id ? themestyles.PRIMARY : undefined,
-            borderWidth: selectedCard === item.id ? 0.9 : 0.4,
-          },
-        ]}
-        onPress={() => handleSelectedCard(item)}>
-        <Image
-          source={item.icon}
-          style={{height: 60, width: '40%', resizeMode: 'contain'}}
-        />
+        style={cardStyle}
+        onPress={() => handleSelectedCard(item.id)}
+      >
+        <Image source={item.icon} style={styles.icon} />
       </TouchableOpacity>
     );
   };
@@ -79,13 +95,10 @@ const PaymentScreen = () => {
           scrollEnabled={false}
           data={CARD_DETAILS}
           keyExtractor={item => item.id.toString()}
-          renderItem={({item, index}) => renderItems(item, index)}
+          renderItem={renderItems}
         />
-        <View style={{width: '90%', alignSelf: 'center', marginBottom: 30}}>
-          <Button
-            title="Next"
-            onPress={() => navigation.navigate('ProfileImage')}
-          />
+        <View style={{ width: '90%', alignSelf: 'center', marginBottom: 30 }}>
+          <Button title="Next" onPress={handleOnPress} />
         </View>
       </View>
     </ScrollView>
@@ -117,17 +130,9 @@ const styles = StyleSheet.create({
     width: '60%',
     alignSelf: 'center',
   },
-  cardIconContainer: {
-    width: '70%',
-    height: 140,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 0.4,
-    // borderColor: themestyles.COLOR_GREY,
-    borderRadius: 10,
-    marginVertical: 10,
-    marginHorizontal: 20,
-    // backgroundColor:themestyles.LIGHT_GREY,
-    alignSelf: 'center',
+  icon: {
+    height: 60,
+    width: '40%',
+    resizeMode: 'contain',
   },
 });

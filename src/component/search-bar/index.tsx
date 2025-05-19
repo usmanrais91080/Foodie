@@ -1,7 +1,9 @@
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import React from 'react';
+
 import themestyles from '../../assets/styles/themestyles';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+
 import {StackNavigationProp} from '@react-navigation/stack';
 import {useNavigation} from '@react-navigation/native';
 
@@ -13,13 +15,7 @@ type NavigationProps = StackNavigationProp<SearchProps>;
 const SearchBar = () => {
   const navigation = useNavigation<NavigationProps>();
   return (
-    <View
-      style={{
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 25,
-        marginTop: 25,
-      }}>
+    <View style={styles.container}>
       <TouchableOpacity
         style={styles.searchContainer}
         onPress={() => navigation.navigate('Search')}>
@@ -28,7 +24,12 @@ const SearchBar = () => {
         <Icon name="tune" size={25} color={themestyles.COLOR_GREY} />
       </TouchableOpacity>
       <TouchableOpacity activeOpacity={0.5}>
-        <Icon name="notifications" size={45} color={themestyles.PRIMARY} />
+        <Icon
+          name="notifications"
+          size={45}
+          color={themestyles.PRIMARY}
+          style={{position: 'static'}}
+        />
       </TouchableOpacity>
     </View>
   );
@@ -37,6 +38,12 @@ const SearchBar = () => {
 export default SearchBar;
 
 const styles = StyleSheet.create({
+  container: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 25,
+    marginTop: 25,
+  },
   searchContainer: {
     height: 54,
     width: '83%',

@@ -9,66 +9,29 @@ import {
   View,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
+import {Controller, UseFormSetValue} from 'react-hook-form';
 import themestyles from '../../assets/styles/themestyles';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {useGetCountries} from '../../api/queries';
 import Loader from '../loader';
 
-const CountryPicker = () => {
+type CountryPickerProps = {
+  name: string;
+  control: any;
+  placeholder?: string;
+  setValue: UseFormSetValue<any>;
+};
+const CountryPicker: React.FC<CountryPickerProps> = ({
+  name,
+  control,
+  placeholder = 'Select Country',
+  setValue,
+}) => {
   const [showModal, setShowModal] = useState(false);
-  const [countryList, setCountryList] = useState([]);
-  const [selectedCountry, setSelectedCountry] = useState();
+  const [countryList, setCountryList] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
 
-  const {data: countriesData, isLoading, error} = useGetCountries();
-
-  const renderItemList = (item, index) => {
-    return (
-      <TouchableOpacity
-        style={[
-          styles.textContainer,
-          {
-            backgroundColor:
-              selectedCountry == item ? themestyles.LIGHT_GREY2 : undefined,
-          },
-        ]}
-        onPress={() => {
-          setSelectedCountry(item);
-          setShowModal(false);
-        }}>
-        <Text
-          style={[
-            styles.countryText,
-            {fontWeight: selectedCountry === item ? '700' : undefined},
-          ]}>
-          {item}
-        </Text>
-      </TouchableOpacity>
-    );
-  };
-
-  // useEffect(
-  //   function handleDebounceSearch() {
-  //     if (debounceSearch === '') {
-  //       setCountryList(COUNTRIES);
-  //     } else {
-  //       const filtered = COUNTRIES.filter(item =>
-  //         item.toLowerCase().includes(debounceSearch.toLowerCase()),
-  //       );
-  //       setCountryList(filtered);
-  //     }
-  //   },
-  //   [debounceSearch],
-  // );
-
-  // useEffect(function clearDebounce(){
-  //   const handler=setTimeout(() => {
-  //     setDebounceSearch(searchQuery.trim())
-  //   }, 300);
-  //   return function cleanupTimeout(){
-  //     cleanupTimeout(handler)
-  //   }
-  // },[searchQuery])
+  const {data: countriesData, isLoading} = useGetCountries();
 
   useEffect(() => {
     if (!countriesData) return;
@@ -79,46 +42,69 @@ const CountryPicker = () => {
     setCountryList(filtered);
   }, [searchQuery, countriesData]);
 
+  const renderItemList = (item: string) => (
+    <TouchableOpacity
+      style={styles.textContainer}
+      onPress={() => {
+        setValue(name, item); // set value to form
+        setShowModal(false);
+      }}>
+      <Text style={styles.countryText}>{item}</Text>
+    </TouchableOpacity>
+  );
+
   return (
-    <View>
-      <TouchableOpacity
-        style={styles.inputContainer}
-        onPress={() => setShowModal(true)}>
-        <Icon name="flag" size={22} />
-        <Text style={styles.seletectCountryText}>
-          {selectedCountry ?? 'Select Country'}
-        </Text>
-      </TouchableOpacity>
-      <Modal visible={showModal} animationType="slide" transparent>
-        <TouchableWithoutFeedback onPress={() => setShowModal(false)}>
-          <View style={styles.modalContainer}>
-            <View style={styles.modalContent}>
-              <TouchableOpacity style={styles.searchBar}>
-                <Icon name="search" size={20} />
-                <TextInput
-                  placeholder="Search country"
-                  style={styles.input}
-                  placeholderTextColor={themestyles.COLOR_BLACK}
-                  value={searchQuery}
-                  onChangeText={setSearchQuery}
-                />
-              </TouchableOpacity>
-              {isLoading ? (
-                <Loader loading />
-              ) : (
-                <FlatList
-                  data={countryList}
-                  renderItem={({item, index}) => renderItemList(item, index)}
-                  ListEmptyComponent={
-                    <Text style={styles.noCountrText}>No country found</Text>
-                  }
-                />
-              )}
-            </View>
-          </View>
-        </TouchableWithoutFeedback>
-      </Modal>
-    </View>
+    <Controller
+      control={control}
+      name={name}
+      render={({field: {value}, fieldState: {error}}) => (
+        <>
+          <TouchableOpacity
+            style={styles.inputContainer}
+            onPress={() => setShowModal(true)}>
+            <Icon name="flag" size={22} />
+            <Text style={styles.seletectCountryText}>
+              {value ? value : placeholder}
+            </Text>
+          </TouchableOpacity>
+
+          {error && <Text style={styles.errorText}>{error.message}</Text>}
+
+          <Modal visible={showModal} animationType="slide" transparent>
+            <TouchableWithoutFeedback onPress={() => setShowModal(false)}>
+              <View style={styles.modalContainer}>
+                <View style={styles.modalContent}>
+                  <TouchableOpacity style={styles.searchBar}>
+                    <Icon name="search" size={20} />
+                    <TextInput
+                      placeholder="Search country"
+                      style={styles.input}
+                      placeholderTextColor={themestyles.COLOR_BLACK}
+                      value={searchQuery}
+                      onChangeText={setSearchQuery}
+                    />
+                  </TouchableOpacity>
+                  {isLoading ? (
+                    <Loader loading />
+                  ) : (
+                    <FlatList
+                      data={countryList}
+                      renderItem={({item}) => renderItemList(item)}
+                      keyExtractor={(item, index) => index.toString()}
+                      ListEmptyComponent={
+                        <Text style={styles.noCountrText}>
+                          No country found
+                        </Text>
+                      }
+                    />
+                  )}
+                </View>
+              </View>
+            </TouchableWithoutFeedback>
+          </Modal>
+        </>
+      )}
+    />
   );
 };
 
@@ -184,6 +170,12 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     alignSelf: 'center',
     marginTop: 5,
+  },
+  errorText: {
+    color: 'red',
+    marginTop: 4,
+    fontSize: 10,
+    textAlign: 'center',
   },
 });
 

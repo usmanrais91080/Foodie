@@ -1,4 +1,5 @@
 import {
+  StyleProp,
   StyleSheet,
   Text,
   TextInput,
@@ -6,8 +7,9 @@ import {
   View,
   ViewStyle,
 } from 'react-native';
-import React, {FC} from 'react';
+import React, {FC, useState} from 'react';
 import {Controller, Control, FieldValues} from 'react-hook-form';
+
 import themestyles from '../../assets/styles/themestyles';
 
 type TInputProps = {
@@ -20,6 +22,7 @@ type TInputProps = {
   secureTextEntry?: boolean;
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
+  inputStyle?: StyleProp<ViewStyle>;
   onPress?: () => void;
 };
 
@@ -32,12 +35,20 @@ const Input: FC<TInputProps> = ({
   label,
   leftIcon,
   rightIcon,
+  inputStyle,
   secureTextEntry,
   onPress,
 }) => {
+  const [isFocused, setIsFocused] = useState(false);
+
   const dynamicInputStyle = {
     marginTop: label ? 5 : 0,
     marginBottom: label ? 8 : 0,
+  } as ViewStyle;
+
+  const inputOutlineColorStyle = {
+    borderColor: isFocused ? themestyles.PRIMARY : 'transparent',
+    borderWidth: isFocused ? 1 : 0,
   } as ViewStyle;
 
   return (
@@ -49,17 +60,27 @@ const Input: FC<TInputProps> = ({
         rules={rules}
         render={({field: {value, onChange, onBlur}, fieldState: {error}}) => (
           <>
-            <View style={[styles.inputContainer,dynamicInputStyle]}>
+            <View
+              style={[
+                styles.inputContainer,
+                dynamicInputStyle,
+                inputOutlineColorStyle,
+              ]}>
               {leftIcon && <View style={{paddingRight: 10}}>{leftIcon}</View>}
               <TextInput
                 placeholder={placeholder}
                 value={value}
                 onChangeText={onChange}
-                onBlur={onBlur}
+                onBlur={() => {
+                  setIsFocused(false), onBlur;
+                }}
+                onFocus={() => setIsFocused(true)}
                 secureTextEntry={secureTextEntry}
                 keyboardType={keyboardType}
                 placeholderTextColor={'#000000'}
-                style={[styles.input, {fontSize: 12}]}
+                style={[styles.input, inputStyle, {fontSize: 12}]}
+                autoCapitalize="none"
+                autoCorrect={false}
               />
               {rightIcon && (
                 <TouchableOpacity onPress={onPress}>
