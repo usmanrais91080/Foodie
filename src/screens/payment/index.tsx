@@ -1,11 +1,20 @@
-import React, { useCallback, useState, useEffect } from 'react';
-import { FlatList, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View, ViewStyle } from 'react-native';
+import React, {useCallback, useState, useEffect} from 'react';
+import {
+  FlatList,
+  Image,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  ViewStyle,
+} from 'react-native';
 import themestyles from '../../assets/styles/themestyles';
-import { Button, Header } from '../../component';
-import { useNavigation } from '@react-navigation/native';
-import { StackNavigationProp } from '@react-navigation/stack';
+import {Button, Header} from '../../component';
+import {useNavigation} from '@react-navigation/native';
+import {StackNavigationProp} from '@react-navigation/stack';
 import images from '../../assets';
-import { useToast } from '../../component/toast';
+import {useToast} from '../../component/toast';
 
 type AuthStackParamList = {
   BioScreen: undefined;
@@ -22,7 +31,7 @@ type NavigationProps = StackNavigationProp<AuthStackParamList>;
 const PaymentScreen = () => {
   const [selectedCard, setSelectedCard] = useState<null | number>(null);
   const navigation = useNavigation<NavigationProps>();
-  const { showToast } = useToast();
+  const {showToast} = useToast();
 
   const CARD_DETAILS: CardItem[] = [
     {
@@ -54,10 +63,9 @@ const PaymentScreen = () => {
     navigation.navigate('ProfileImage');
   }, [selectedCard, navigation, showToast]);
 
-  useEffect(() => {
-  }, [selectedCard]); 
+  useEffect(() => {}, [selectedCard]);
 
-  const renderItems = ({ item }: { item: CardItem }) => {
+  const renderItems = ({item}: {item: CardItem}) => {
     const isSelected = selectedCard === item.id;
 
     const cardStyle: ViewStyle = {
@@ -76,8 +84,7 @@ const PaymentScreen = () => {
     return (
       <TouchableOpacity
         style={cardStyle}
-        onPress={() => handleSelectedCard(item.id)}
-      >
+        onPress={() => handleSelectedCard(item.id)}>
         <Image source={item.icon} style={styles.icon} />
       </TouchableOpacity>
     );
@@ -97,9 +104,7 @@ const PaymentScreen = () => {
           keyExtractor={item => item.id.toString()}
           renderItem={renderItems}
         />
-        <View style={{ width: '90%', alignSelf: 'center', marginBottom: 30 }}>
-          <Button title="Next" onPress={handleOnPress} />
-        </View>
+        <Button title="Next" onPress={handleOnPress} style={styles.button}/>
       </View>
     </ScrollView>
   );
@@ -135,4 +140,9 @@ const styles = StyleSheet.create({
     width: '40%',
     resizeMode: 'contain',
   },
+  button:{
+    width: '90%',
+    alignSelf: 'center',
+    marginTop: 50,
+  }
 });

@@ -1,26 +1,34 @@
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import {
+  StyleProp,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  ViewStyle,
+} from 'react-native';
 import React from 'react';
 import themestyles from '../../assets/styles/themestyles';
 
 type TButtonProps = {
   title?: string;
   onPress?: () => void;
+  style?: StyleProp<ViewStyle>;
   variant?: 'solid' | 'outline'; // support for outline/solid styles
 };
 
-const Button = ({ title, onPress, variant = 'solid' }: TButtonProps) => {
+const Button = ({title, onPress, variant = 'solid', style}: TButtonProps) => {
   const isOutline = variant === 'outline';
 
   return (
-    <View style={{ width: '100%' }}>
+    <View style={{width: '100%'}}>
       <TouchableOpacity
         style={[
           styles.container,
+          style,
           isOutline ? styles.outline : styles.solid,
         ]}
         onPress={onPress}
-        activeOpacity={0.7}
-      >
+        activeOpacity={0.7}>
         <Text style={[styles.titleText, isOutline && styles.outlineText]}>
           {title}
         </Text>
@@ -37,7 +45,6 @@ const styles = StyleSheet.create({
     height: 40,
     borderRadius: 5,
     marginBottom: 20,
-    marginTop: 30,
     alignItems: 'center',
     justifyContent: 'center',
   },

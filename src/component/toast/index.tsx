@@ -1,7 +1,6 @@
 import React, {createContext, useContext, useState, useCallback} from 'react';
 import {Animated, StyleSheet, Text, View} from 'react-native';
 import themestyles from '../../assets/styles/themestyles';
-import Icon from '../custom-icon';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 type ToastType = 'success' | 'error';
@@ -83,8 +82,8 @@ export const ToastProvider: React.FC<{children: React.ReactNode}> = ({
         <Animated.View
           style={[styles.toastContainer, {transform: [{translateY}]}]}>
           <View style={{flexDirection: 'row', alignItems: 'center', gap: 10}}>
-            {renderIcon(toast.type)}
             <Text style={styles.toastText}>{toast.message}</Text>
+            {renderIcon(toast.type)}
           </View>
         </Animated.View>
       )}

@@ -6,14 +6,19 @@ import {
   PermissionsAndroid,
   Platform,
   ScrollView,
+  TouchableOpacity,
+  Modal,
 } from 'react-native';
 import React, {useState} from 'react';
 import themestyles from '../../assets/styles/themestyles';
 import {Button, Header} from '../../component';
 import images from '../../assets';
+
 import {useNavigation} from '@react-navigation/native';
-import {launchImageLibrary} from 'react-native-image-picker';
 import {StackNavigationProp} from '@react-navigation/stack';
+import ImagePicker from 'react-native-image-crop-picker';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import useAsyncStorage from '../../hooks/useAsyncStorage';
 
 type AuthStackParams = {
   Location: undefined;
@@ -23,7 +28,9 @@ type NavigationProps = StackNavigationProp<AuthStackParams>;
 
 const ProfileImage = () => {
   const [saveProfileImage, setSaveProfileImage] = useState('');
+  const [showImageSelectModal, setshowImageSelectModal] = useState(false);
   const navigation = useNavigation<NavigationProps>();
+  const storeProfileImage = useAsyncStorage('profileImage');
 
   const openCamera = async () => {
     if (Platform.OS === 'android') {
@@ -35,14 +42,56 @@ const ProfileImage = () => {
         return;
       }
     }
-
-    const result = await launchImageLibrary({
-      mediaType: 'photo',
-    });
-
-    if (result?.assets && result.assets.length > 0) {
-      const uri = result.assets[0].uri;
+    ImagePicker.openCamera({
+      width: 300,
+      height: 400,
+      cropping: true,
+      includeBase64: true,
+    }).then(image => {
+      const uri = image.path;
       setSaveProfileImage(uri);
+      setshowImageSelectModal(false);
+    });
+  };
+
+  const openGallery = async () => {
+    if (Platform.OS === 'android') {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+      );
+
+      if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
+        return;
+      }
+    }
+    ImagePicker.openPicker({
+      width: 300,
+      height: 400,
+      cropping: true,
+      includeBase64: true,
+    }).then(image => {
+      const uri = image.path;
+      setSaveProfileImage(uri);
+      setshowImageSelectModal(false);
+    });
+  };
+
+  const editImage = async () => {
+    if (!saveProfileImage) return;
+
+    try {
+      const editedImage = await ImagePicker.openCropper({
+        path: saveProfileImage,
+        width: 300,
+        height: 400,
+        cropping: true,
+      });
+
+      if (editedImage?.path) {
+        setSaveProfileImage(editedImage.path);
+      }
+    } catch (error) {
+      console.warn('Editing cancelled or failed', error);
     }
   };
 
@@ -70,7 +119,7 @@ const ProfileImage = () => {
                 title="Select Photo"
                 variant="outline"
                 onPress={() => {
-                  openCamera();
+                  setshowImageSelectModal(true);
                 }}
               />
             </View>
@@ -78,16 +127,54 @@ const ProfileImage = () => {
         )}
       </View>
       {saveProfileImage.length ? (
-        <Text style={styles.replaceText}>Replace or edit image</Text>
+        <View style={styles.replaceTextContainer}>
+          <TouchableOpacity onPress={openGallery}>
+            <Text style={styles.replaceText}>Replace </Text>
+          </TouchableOpacity>
+          <Text style={styles.replaceText}>or </Text>
+          <TouchableOpacity onPress={editImage}>
+            <Text style={styles.replaceText}>Edit image</Text>
+          </TouchableOpacity>
+        </View>
       ) : undefined}
       <View style={styles.buttonContainer}>
         <Button
           title="Next"
-          onPress={() =>
-            navigation.navigate('Location', {uri: saveProfileImage})
-          }
+          onPress={() => {
+            storeProfileImage(saveProfileImage);
+            navigation.navigate('Location', {uri: saveProfileImage});
+          }}
         />
       </View>
+
+      {/* Modal */}
+      <Modal
+        visible={showImageSelectModal}
+        transparent={true}
+        animationType="slide">
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <MaterialIcons
+              name="close"
+              size={24}
+              style={styles.closeIcon}
+              onPress={() => setshowImageSelectModal(false)}
+            />
+            <Button
+              title="Open Camera"
+              variant="outline"
+              style={styles.button}
+              onPress={openCamera}
+            />
+            <Button
+              title="Select from Gallery"
+              variant="outline"
+              style={styles.button}
+              onPress={openGallery}
+            />
+          </View>
+        </View>
+      </Modal>
     </ScrollView>
   );
 };
@@ -98,6 +185,21 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: themestyles.COLOR_WHITE,
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContent: {
+    width: 200,
+    height: 200,
+    backgroundColor: themestyles.COLOR_WHITE,
+    alignSelf: 'center',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 10,
   },
   subHeader: {
     marginTop: 20,
@@ -121,7 +223,7 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
     position: 'absolute',
     right: 20,
-    top: themestyles.SCREEN_HEIGHT * 0.29,
+    top: themestyles.SCREEN_HEIGHT * 0.25,
   },
   imageContainer: {
     height: 275,
@@ -169,4 +271,14 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
   outlineButton: {width: '80%', alignSelf: 'center', marginTop: 20},
+  replaceTextContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignSelf: 'center',
+  },
+  button: {
+    width: '80%',
+    alignSelf: 'center',
+  },
+  closeIcon: {position: 'absolute', top: 10, right: 10, marginBottom: 20},
 });
