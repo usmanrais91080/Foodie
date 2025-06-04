@@ -12,7 +12,6 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import themestyles from '../../assets/styles/themestyles';
 import CountryPicker from '../../component/country-picker';
 import useAsyncStorage from '../../hooks/useAsyncStorage';
-import {MultiSelect} from '../../component/multiple-selector';
 
 type AuthStackParamList = {
   PaymentScreen: undefined;

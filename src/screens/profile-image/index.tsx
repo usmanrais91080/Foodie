@@ -142,7 +142,7 @@ const ProfileImage = () => {
           title="Next"
           onPress={() => {
             storeProfileImage(saveProfileImage);
-            navigation.navigate('Location', {uri: saveProfileImage});
+            navigation.navigate('Location');
           }}
         />
       </View>

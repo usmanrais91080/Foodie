@@ -1,8 +1,12 @@
-import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+} from 'react-native';
 import React, {useCallback, useState} from 'react';
-import images from '../../assets';
-import themestyles from '../../assets/styles/themestyles';
-import {Button, Input} from '../../component';
+
 import {useForm} from 'react-hook-form';
 import {z} from 'zod';
 import {zodResolver} from '@hookform/resolvers/zod';
@@ -10,12 +14,25 @@ import {useNavigation} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
+import images from '../../assets';
+import themestyles from '../../assets/styles/themestyles';
+import {Button, Input} from '../../component';
+import {loginWithEmailAndPassword} from '../../auth';
+import {useToast} from '../../component/toast';
+
 type AuthStackParamList = {
   SignUp: undefined;
+  Home: undefined;
 };
+
 type NavigationProps = StackNavigationProp<AuthStackParamList>;
+
 const Login = () => {
-  const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [showPassword, setShowPassword] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
+  const navigation = useNavigation<NavigationProps>();
+  const {showToast} = useToast();
+
   const LoginSchema = z.object({
     email: z
       .string()
@@ -33,14 +50,39 @@ const Login = () => {
     },
     resolver: zodResolver(LoginSchema),
   });
-  const onSubmit = data => {
-    console.log(data);
-  };
-  const navigation = useNavigation<NavigationProps>();
 
   const togglePassword = useCallback(() => {
     setShowPassword(!showPassword);
   }, [showPassword, setShowPassword]);
+
+  const handleLogin = async (formData: FormValue) => {
+    setLoading(true);
+    try {
+      const user = await loginWithEmailAndPassword({
+        email: formData.email,
+        password: formData.password,
+      });
+      console.log(user);
+    } catch (error: any) {
+      setLoading(false);
+      if (error.code === 'auth/email-already-in-use') {
+        showToast({
+          type: 'error',
+          message: 'That email address is already in use!',
+        });
+      } else if (error.code === 'auth/invalid-email') {
+        showToast({
+          type: 'error',
+          message: 'That email address is invalid!',
+        });
+      } else {
+        showToast({
+          type: 'error',
+          message: error?.message || 'Something went wrong',
+        });
+      }
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -83,7 +125,12 @@ const Login = () => {
         <TouchableOpacity style={styles.forgotTextContainer}>
           <Text>Forgot Password?</Text>
         </TouchableOpacity>
-        <Button title="Login" onPress={handleSubmit(onSubmit)} />
+        <Button
+          title="Login"
+          onPress={handleSubmit(handleLogin)}
+          style={styles.button}
+          isLoading={loading}
+        />
         <Text style={styles.orText}>Or</Text>
         <View style={styles.iconContainer}>
           <TouchableOpacity>
@@ -97,11 +144,7 @@ const Login = () => {
       <Text style={styles.dontHaveText}>Don't have an account?</Text>
       <TouchableOpacity style={styles.Register}>
         <Text
-          style={{
-            color: themestyles.PRIMARY,
-            textTransform: 'uppercase',
-            fontWeight: '600',
-          }}
+          style={styles.registerText}
           onPress={() => navigation.navigate('SignUp')}>
           Register
         </Text>
@@ -113,7 +156,8 @@ const Login = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 50,
+    alignItems:"center",
+    justifyContent:"center"
   },
   logo: {
     height: themestyles.SCREEN_HEIGHT * 0.2,
@@ -168,6 +212,14 @@ const styles = StyleSheet.create({
   Register: {
     alignSelf: 'center',
     marginTop: 10,
+  },
+  button: {
+    marginTop: 15,
+  },
+  registerText: {
+    color: themestyles.PRIMARY,
+    textTransform: 'uppercase',
+    fontWeight: '600',
   },
 });
 export default Login;

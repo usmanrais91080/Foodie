@@ -9,6 +9,8 @@ import {
   View,
 } from 'react-native';
 import React, {useState} from 'react';
+import {useNavigation} from '@react-navigation/native';
+import {StackNavigationProp} from '@react-navigation/stack';
 
 import {ImageCard, SearchBar} from '../../component';
 import {useGetBurger, useGetSalad, useGetLambData} from '../../api/queries';
@@ -17,24 +19,53 @@ import themestyles from '../../assets/styles/themestyles';
 import images from '../../assets';
 import HomeSkeletonLoader from '../../component/home-skeleton-loader';
 
+type TProductProps = {
+  imageUrl: string | number;
+  title: string;
+  price: string;
+  review?: number;
+  description?: string;
+  calories?: number;
+  time?: number;
+  ingredients?: {ingredient: string; measure: string}[];
+  foodArea?: string;
+};
+
+export type MainStackParamList = {
+  ProductDetailScreen: TProductProps;
+};
+
+type NavigationProps = StackNavigationProp<MainStackParamList>;
+
 const Home = () => {
   const {data: allProducts, isLoading, error} = useGetBurger();
   const {data: saladData} = useGetSalad();
   const {data: lambData} = useGetLambData();
 
   const [expandDeserts, setExpandDeserts] = useState(false);
+  const navigation = useNavigation<NavigationProps>();
 
   const handleViewMore = () => {
-    setExpandDeserts(!expandDeserts);
+    setExpandDeserts(expandDeserts => !expandDeserts);
   };
+
   return (
     <>
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        style={styles.contentContainer}>
         <View style={styles.container}>
           {isLoading ? (
             <HomeSkeletonLoader />
           ) : (
             <>
+              <View style={styles.profileImageName}>
+                <Image
+                  source={images.defaultUserIcon}
+                  style={styles.profileImage}
+                />
+                <Text>Welcome, Usman!</Text>
+              </View>
               <Text style={styles.titleText}>Find Your Favourite Food</Text>
               <SearchBar />
               <Image source={images.promotionBanner} style={styles.banner} />
@@ -57,14 +88,28 @@ const Home = () => {
                     <ImageCard
                       title={item.strMeal}
                       imageUrl={item.strMealThumb}
+                      description={item.strInstructions}
                       price={item.price}
-                      onPress={() => {}}
+                      review={item.review}
+                      onPress={() => {
+                        navigation.navigate('ProductDetailScreen', {
+                          title: item.strMeal,
+                          imageUrl: item.strMealThumb,
+                          price: item.price,
+                          description: item.strInstructions,
+                          review: item.review,
+                          calories: item.calories,
+                          time: item.time,
+                          ingredients: item.ingredients,
+                          foodArea: item.strArea,
+                        });
+                      }}
                     />
                   </View>
                 )}
               />
               <View style={styles.desertTextContainer}>
-                <Text style={styles.popularText}>Deserts</Text>
+                <Text style={styles.popularText}>Salad</Text>
                 <TouchableOpacity onPress={handleViewMore}>
                   <Text style={styles.viewMoreText}>
                     {expandDeserts ? 'View Less' : 'View More'}
@@ -89,7 +134,22 @@ const Home = () => {
                         title={item.strMeal}
                         imageUrl={item.strMealThumb}
                         price={item.price}
-                        onPress={() => {}}
+                        description={item.strInstructions}
+                        calories={item.strIngredient1}
+                        review={item.review}
+                        onPress={() => {
+                          navigation.navigate('ProductDetailScreen', {
+                            title: item.strMeal,
+                            imageUrl: item.strMealThumb,
+                            price: item.price,
+                            description: item.strInstructions,
+                            calories: item.calories,
+                            time: item.time,
+                            review: item.review,
+                            ingredients: item.ingredients,
+                            foodArea: item.strArea,
+                          });
+                        }}
                       />
                     </View>
                   )}
@@ -107,7 +167,20 @@ const Home = () => {
                         title={item.strMeal}
                         imageUrl={item.strMealThumb}
                         price={item.price}
-                        onPress={() => {}}
+                        description={item.strInstructions}
+                        review={item.review}
+                        onPress={() => {
+                          navigation.navigate('ProductDetailScreen', {
+                            title: item.strMeal,
+                            imageUrl: item.strMealThumb,
+                            price: item.price,
+                            description: item.strInstructions,
+                            calories: item.calories,
+                            time: item.time,
+                            ingredients: item.ingredients,
+                            foodArea: item.strArea,
+                          });
+                        }}
                       />
                     </View>
                   )}
@@ -132,7 +205,21 @@ const Home = () => {
                       title={item.strMeal}
                       imageUrl={item.strMealThumb}
                       price={item.price}
-                      onPress={() => {}}
+                      description={item.strInstructions}
+                      review={item.review}
+                      onPress={() => {
+                        navigation.navigate('ProductDetailScreen', {
+                          title: item.strMeal,
+                          imageUrl: item.strMealThumb,
+                          price: item.price,
+                          description: item.description,
+                          calories: item.calories,
+                          time: item.time,
+                          review: item.review,
+                          ingredients: item.ingredients,
+                          foodArea: item.strArea,
+                        });
+                      }}
                     />
                   </View>
                 )}
@@ -154,13 +241,23 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     paddingTop:
       Platform.OS === 'ios'
-        ? themestyles.SCREEN_HEIGHT * 0.042
+        ? themestyles.SCREEN_HEIGHT * 0.07
         : themestyles.SCREEN_HEIGHT * 0.032,
   },
+  contentContainer: {flex: 1, backgroundColor: 'white'},
   titleText: {
     fontSize: 32,
     fontWeight: '700',
     width: '70%',
+  },
+  profileImageName: {
+    flexDirection: 'row',
+    // gap:10
+    alignItems: 'center',
+  },
+  profileImage: {
+    width: 50,
+    height: 50,
   },
   popularTextContainer: {
     flexDirection: 'row',

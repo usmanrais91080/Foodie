@@ -11,6 +11,8 @@ import Search from "./search-screen";
 import Profile from "./profile-screen";
 import Cart from "./cart";
 import Chat from "./chat";
+import Carousel from "./carousel-screen";
+import ProductDetailScreen from "./product-detail-screen";
 
 export {
   Login,
@@ -25,5 +27,7 @@ export {
   Search,
   Profile,
   Cart,
-  Chat
+  Chat,
+  Carousel,
+  ProductDetailScreen
 };

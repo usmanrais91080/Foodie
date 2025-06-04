@@ -9,12 +9,16 @@ import {
   View,
   ViewStyle,
 } from 'react-native';
-import themestyles from '../../assets/styles/themestyles';
-import {Button, Header} from '../../component';
+
 import {useNavigation} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
+
+import {Button, Header} from '../../component';
 import images from '../../assets';
 import {useToast} from '../../component/toast';
+import themestyles from '../../assets/styles/themestyles';
+import useAsyncStorage from '../../hooks/useAsyncStorage'; 
+
 
 type AuthStackParamList = {
   BioScreen: undefined;
@@ -28,25 +32,27 @@ type CardItem = {
 
 type NavigationProps = StackNavigationProp<AuthStackParamList>;
 
+const CARD_DETAILS: CardItem[] = [
+  {
+    id: 1,
+    icon: images.payPal,
+  },
+  {
+    id: 2,
+    icon: images.visa,
+  },
+  {
+    id: 3,
+    icon: images.payoneer,
+  },
+];
+
 const PaymentScreen = () => {
   const [selectedCard, setSelectedCard] = useState<null | number>(null);
   const navigation = useNavigation<NavigationProps>();
   const {showToast} = useToast();
+  const storePaymentMethod = useAsyncStorage('paymentMethod');
 
-  const CARD_DETAILS: CardItem[] = [
-    {
-      id: 1,
-      icon: images.payPal,
-    },
-    {
-      id: 2,
-      icon: images.visa,
-    },
-    {
-      id: 3,
-      icon: images.payoneer,
-    },
-  ];
 
   const handleSelectedCard = (id: number) => {
     setSelectedCard(id);
@@ -60,8 +66,11 @@ const PaymentScreen = () => {
       });
       return;
     }
+    const selectedPaymentMethod=CARD_DETAILS.find(card=>card.id===selectedCard)
+    storePaymentMethod(selectedPaymentMethod?.id)
+
     navigation.navigate('ProfileImage');
-  }, [selectedCard, navigation, showToast]);
+  }, [selectedCard, navigation, showToast,storePaymentMethod]);
 
   useEffect(() => {}, [selectedCard]);
 

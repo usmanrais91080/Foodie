@@ -6,6 +6,7 @@ export default{
     OPAC_COLOR: 'rgba(255,255,255,0.20)',
     WHITE_OPAC_10: 'rgba(255,255,255,0.10)',
     WHITE_OPAC_90: 'rgba(255, 255, 255, 0.90)',
+    WHITE_OPAC_60: 'rgba(255, 255, 255, 0.80)',
     WHITE_OPAC_3: 'rgba(255, 255, 255, 0.3)',
     OPAC_BLACK_65: 'rgba(0,0,0,0.65)',
     SEMI_TRANSPARENT_DARK_GRAY: 'rgba(52, 52, 52, 0.5)',

@@ -5,12 +5,13 @@ import themestyles from '../../assets/styles/themestyles';
 type LoaderProps = {
   loading: boolean;
   message?: string;
+  color?: string;
 };
-const Loader: React.FC<LoaderProps> = ({loading, message}) => {
+const Loader: React.FC<LoaderProps> = ({loading, message, color}) => {
   if (!loading) return null;
   return (
     <View style={styles.container}>
-      <ActivityIndicator size={'small'} color={themestyles.PRIMARY} />
+      <ActivityIndicator size={'small'} color={color ?? themestyles.PRIMARY} />
       {message && <Text>{message}</Text>}
     </View>
   );
@@ -19,9 +20,9 @@ const Loader: React.FC<LoaderProps> = ({loading, message}) => {
 export default Loader;
 
 const styles = StyleSheet.create({
-  container:{
-    flex:1,
-    justifyContent:"center",
-    alignItems:'center'
-  }
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 });

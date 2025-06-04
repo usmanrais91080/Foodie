@@ -52,28 +52,21 @@ export const ToastProvider: React.FC<{children: React.ReactNode}> = ({
   });
 
   const renderIcon = (type: ToastType) => {
-  switch (type) {
-    case 'success':
-      return (
-        <MaterialIcons
-          name="thumbs-up"
-          size={18}
-          color={themestyles.LIME_GREEN}
-        />
-      );
-    case 'error':
-      return (
-        <MaterialIcons
-          name="warning"
-          size={18}
-          color="red"
-        />
-      );
-    default:
-      return null;
-  }
-};
-
+    switch (type) {
+      case 'success':
+        return (
+          <MaterialIcons
+            name="thumbs-up"
+            size={18}
+            color={themestyles.LIME_GREEN}
+          />
+        );
+      case 'error':
+        return <MaterialIcons name="warning" size={18} color="red" />;
+      default:
+        return null;
+    }
+  };
 
   return (
     <ToastContext.Provider value={{showToast}}>
@@ -81,8 +74,14 @@ export const ToastProvider: React.FC<{children: React.ReactNode}> = ({
       {visible && toast && (
         <Animated.View
           style={[styles.toastContainer, {transform: [{translateY}]}]}>
-          <View style={{flexDirection: 'row', alignItems: 'center', gap: 10}}>
-            <Text style={styles.toastText}>{toast.message}</Text>
+          <View style={styles.messageContainer}>
+            <Text
+              style={[
+                styles.toastText,
+                {fontSize: toast.message.length > 20 ? 10 : 13},
+              ]}>
+              {toast.message}
+            </Text>
             {renderIcon(toast.type)}
           </View>
         </Animated.View>
@@ -117,7 +116,13 @@ const styles = StyleSheet.create({
   },
   toastText: {
     color: 'white',
-    fontSize: 14,
+    fontSize: 12,
     fontWeight: '500',
+  },
+  messageContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+    paddingHorizontal: 25,
   },
 });

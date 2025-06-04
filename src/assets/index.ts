@@ -10,5 +10,7 @@ locaionIcon:require('./icons/location-icon.png'),
 congratesIcon:require('./icons/congratesIcon.png'),
 promotionBanner: require('./images/Promotion.png'),
 defaultUserIcon: require('./icons/defaultUserIcon.webp'),
+carouselImg1: require('./images/carouselImg1.png'),
+carouselImg2: require('./images/carouselImg2.png'),
 }
 export default images

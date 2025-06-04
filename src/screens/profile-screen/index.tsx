@@ -7,25 +7,46 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {useTranslation} from 'react-i18next';
+import {useNavigation} from '@react-navigation/native';
+import auth from '@react-native-firebase/auth';
 
 import themestyles from '../../assets/styles/themestyles';
 import {Header} from '../../component';
 import images from '../../assets';
 import CustomSelectorModal from '../../component/modal';
 import i18n from '../../component/translation/i18n';
+import {StackNavigationProp} from '@react-navigation/stack';
+
+type AuthStackParamList = {
+  Login: undefined;
+};
+
+type NavigationProps = StackNavigationProp<AuthStackParamList>;
 
 const Profile = () => {
   const [profileImage, setProfileImage] = useState();
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedItem, setSelectedItem] = useState<string | null>(null);
+  const [userEmail, setUserEmail] = useState('');
+  const [username, setUsername] = useState('');
   const {t} = useTranslation();
+  const navigation = useNavigation<NavigationProps>();
 
   const handleLanguageChange = (lang: string) => {
     i18n.changeLanguage(lang);
+  };
+
+  const handleLogOut = async () => {
+    try {
+      await auth().signOut();
+      navigation.navigate('Login');
+    } catch (error) {
+      console.error('Error logging out: ', error);
+    }
   };
 
   const LANGUAGES_DATA = [
@@ -65,24 +86,47 @@ const Profile = () => {
       image: <Icon name="history" size={28} color={themestyles.COLOR_BLACK} />,
       onPress: () => {},
     },
+    {
+      id: 5,
+      title: 'Sign Out',
+      image: <Icon name="logout" size={28} color={'red'} />,
+      onPress: () => {
+        handleLogOut();
+      },
+    },
   ];
+
+  useEffect(function showUserEmail() {
+    const user = auth().currentUser;
+    if (user) {
+      setUserEmail(user.email||'no email found');
+      setUsername(user.displayName || 'No username found');
+    }
+  }, []);
 
   const renderItemList = (item: any) => {
     // iska mtlb h k item.title equal ho language agr language select na ki ho tu language text deka do ni tu selected language deka do
     const displayTitle =
       item.title === 'Language' && selectedItem ? selectedItem : item.title;
-
     return (
       <TouchableOpacity activeOpacity={0.7} onPress={item.onPress}>
         <View style={styles.listContainer}>
           <View style={styles.listIcon}>{item.image}</View>
-          <Text style={styles.listText}>{displayTitle}</Text>
-          <Icon
-            name="chevron-right"
-            size={25}
-            color={themestyles.COLOR_BLACK}
-            style={styles.arrowIcon}
-          />
+          <Text
+            style={[
+              styles.listText,
+              {color: item.title === 'Sign Out' ? 'red' : undefined},
+            ]}>
+            {displayTitle}
+          </Text>
+          {item.title === 'Sign Out' ? null : (
+            <Icon
+              name="chevron-right"
+              size={25}
+              color={themestyles.COLOR_BLACK}
+              style={styles.arrowIcon}
+            />
+          )}
         </View>
       </TouchableOpacity>
     );
@@ -98,8 +142,8 @@ const Profile = () => {
         <Icon name="photo-camera" size={20} color={themestyles.COLOR_WHITE} />
       </View>
       <View style={styles.nameEmailContainer}>
-        <Text style={styles.name}>Usman Rais</Text>
-        <Text style={styles.email}>urais91080@gmail.com</Text>
+        <Text style={styles.name}>{username}</Text>
+        <Text style={styles.email}>{userEmail}</Text>
       </View>
       <View style={styles.itemListContainer}>
         <FlatList

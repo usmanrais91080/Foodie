@@ -8,19 +8,28 @@ import {
 } from 'react-native';
 import React from 'react';
 import themestyles from '../../assets/styles/themestyles';
+import Loader from '../loader';
 
 type TButtonProps = {
   title?: string;
   onPress?: () => void;
   style?: StyleProp<ViewStyle>;
-  variant?: 'solid' | 'outline'; // support for outline/solid styles
+  variant?: 'solid' | 'outline';
+  isLoading?: boolean;
+  price?:number
 };
 
-const Button = ({title, onPress, variant = 'solid', style}: TButtonProps) => {
+const Button = ({
+  title,
+  onPress,
+  isLoading,
+  variant = 'solid',
+  style,
+}: TButtonProps) => {
   const isOutline = variant === 'outline';
 
   return (
-    <View style={{width: '100%'}}>
+    <View style={{width: '50%'}}>
       <TouchableOpacity
         style={[
           styles.container,
@@ -29,9 +38,13 @@ const Button = ({title, onPress, variant = 'solid', style}: TButtonProps) => {
         ]}
         onPress={onPress}
         activeOpacity={0.7}>
-        <Text style={[styles.titleText, isOutline && styles.outlineText]}>
-          {title}
-        </Text>
+        {isLoading ? (
+          <Loader loading color='white'/>
+        ) : (
+          <Text style={[styles.titleText, isOutline && styles.outlineText]}>
+            {title}
+          </Text>
+        )}
       </TouchableOpacity>
     </View>
   );

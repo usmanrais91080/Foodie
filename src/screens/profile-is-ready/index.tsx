@@ -1,25 +1,64 @@
-import { StyleSheet, Text, View} from 'react-native';
-import React from 'react';
+import {Alert, StyleSheet, Text, View} from 'react-native';
+import React, {useEffect, useState} from 'react';
 import themestyles from '../../assets/styles/themestyles';
 import {Button} from '../../component';
 import SuccessAnimation from '../../animation/success-animation';
-import { useNavigation } from '@react-navigation/native';
-import { StackNavigationProp } from '@react-navigation/stack';
+import {useNavigation} from '@react-navigation/native';
+import {StackNavigationProp} from '@react-navigation/stack';
+import {saveRegisterUserDataToFirestore} from '../../utils/saveRegisterUserDataToFirestore';
+import {updateDoc, doc} from '@react-native-firebase/firestore';
+import {getAuth} from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
 
-type MainStackNavigation={
-  Main:undefined
-}
+type MainStackNavigation = {
+  Main: undefined;
+};
 
-type NavigationProps=StackNavigationProp<MainStackNavigation>
+type NavigationProps = StackNavigationProp<MainStackNavigation>;
+
 const ProfileIsReady = () => {
-  const navigation=useNavigation<NavigationProps>()
+  const navigation = useNavigation<NavigationProps>();
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const uploadData = async () => {
+      setLoading(true);
+      try {
+        await saveRegisterUserDataToFirestore();
+        setLoading(false);
+      } catch (error) {
+        setLoading(false);
+        Alert.alert('Error', 'Failed to save profile data. Please try again.');
+      }
+    };
+    uploadData();
+  }, []); // ✅ runs only once
+
+  const completeOnboarding = async () => {
+    try {
+      const user = getAuth().currentUser;
+      if (user) {
+        await updateDoc(doc(firestore(), 'users', user.uid), {
+          onboardingComplete: true,
+        });
+        navigation.replace('Main'); // ✅ go to main screen
+      }
+    } catch (error) {
+      Alert.alert('Error', 'Failed to complete onboarding. Try again.');
+    }
+  };
+
   return (
     <View style={styles.container}>
-      <SuccessAnimation /> 
+      <SuccessAnimation />
       <Text style={styles.congratestext}>Congrats!</Text>
       <Text style={styles.subheader}>Your Profile Is Ready To Use</Text>
       <View style={styles.buttonContainer}>
-        <Button title="Try Order" onPress={()=>navigation.navigate('Main')}/>
+        <Button
+          title={loading ? 'Saving...' : 'Start Exploring'}
+          isLoading={loading}
+          onPress={completeOnboarding} // ✅ this was missing!
+        />
       </View>
     </View>
   );

@@ -1,7 +1,7 @@
 import {ScrollView, StyleSheet, Text, View} from 'react-native';
 import React, {useMemo} from 'react';
 import themestyles from '../../assets/styles/themestyles';
-import {Button, DropDown, SearchScreenSearchBar} from '../../component';
+import {Button, DropDown, Header, SearchScreenSearchBar} from '../../component';
 
 const Search = () => {
   const FOOD_DATA = useMemo(
@@ -36,6 +36,7 @@ const Search = () => {
 
   return (
     <ScrollView style={styles.container}>
+      <Header/>
       <Text style={styles.titleText}>Find Your Favourite Food</Text>
       <SearchScreenSearchBar />
       <View style={styles.subContainer}>
@@ -58,12 +59,13 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: themestyles.COLOR_WHITE,
     paddingHorizontal: 15,
-    paddingTop: themestyles.SCREEN_HEIGHT * 0.046,
+    paddingTop: themestyles.SCREEN_HEIGHT * 0.016,
   },
   titleText: {
     fontSize: 32,
     fontWeight: '700',
     width: '70%',
+    marginTop:30
   },
   spacing: {
     gap: 25,
@@ -73,6 +75,6 @@ const styles = StyleSheet.create({
     marginTop: 50,
   },
   button: {
-    top: themestyles.SCREEN_HEIGHT * 0.4,
+    top: themestyles.SCREEN_HEIGHT * 0.37,
   },
 });

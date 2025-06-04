@@ -1,8 +1,6 @@
 import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native';
 import React, {useCallback, useState} from 'react';
-import images from '../../assets';
-import themestyles from '../../assets/styles/themestyles';
-import {Button, Input} from '../../component';
+
 import {useForm} from 'react-hook-form';
 import {z} from 'zod';
 import {zodResolver} from '@hookform/resolvers/zod';
@@ -10,12 +8,25 @@ import {useNavigation} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
+import images from '../../assets';
+import themestyles from '../../assets/styles/themestyles';
+import {useToast} from '../../component/toast';
+import {Button, Input} from '../../component';
+import {registerWithEmailAndPassword} from '../../auth';
+
 type AuthStackParamList = {
   Login: undefined;
+  Home: undefined;
+  BioScreen: undefined;
 };
 type NavigationProps = StackNavigationProp<AuthStackParamList>;
+
 const SignUp = () => {
-  const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [showPassword, setShowPassword] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
+  const navigation = useNavigation<NavigationProps>();
+  const {showToast} = useToast();
+
   const LoginSchema = z.object({
     name: z.string().min(1, 'Required'),
     email: z.string().email(),
@@ -31,15 +42,41 @@ const SignUp = () => {
     },
     resolver: zodResolver(LoginSchema),
   });
-  const onSubmit = data => {
-    console.log(data);
-  };
-
-  const navigation = useNavigation<NavigationProps>();
 
   const togglePassword = useCallback(() => {
-    setShowPassword(!showPassword);
-  }, [showPassword, setShowPassword]);
+    setShowPassword(showPassword => !showPassword);
+  }, []);
+
+  const handleSignUp = async (formData: FormValue) => {
+    setLoading(true);
+    try {
+      const userData = await registerWithEmailAndPassword({
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+      });
+      console.log(userData);
+      navigation.navigate('BioScreen');
+    } catch (error: any) {
+      setLoading(false);
+      if (error.code === 'auth/email-already-in-use') {
+        showToast({
+          message: 'That email address is already in use!',
+          type: 'error',
+        });
+      } else if (error.code === 'auth/invalid-email') {
+        showToast({
+          message: 'That email address is invalid!',
+          type: 'error',
+        });
+      } else {
+        showToast({
+          message: error?.message || 'Something went wrong',
+          type: 'error',
+        });
+      }
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -50,7 +87,7 @@ const SignUp = () => {
           placeholder="Name"
           control={control}
           name="name"
-          label="Email"
+          label="Name"
           keyboardType="email-address"
           leftIcon={<Icon name="person" size={18} color="black" />}
         />
@@ -87,16 +124,17 @@ const SignUp = () => {
             )
           }
         />
-        <Button title="Create an Account" onPress={handleSubmit(onSubmit)} />
+        <Button
+          title="Create an Account"
+          onPress={handleSubmit(handleSignUp)}
+          isLoading={loading}
+          style={styles.button}
+        />
       </View>
       <Text style={styles.dontHaveText}>Already have an account?</Text>
       <TouchableOpacity style={styles.Register}>
         <Text
-          style={{
-            color: themestyles.PRIMARY,
-            textTransform: 'uppercase',
-            fontWeight: '600',
-          }}
+          style={styles.loginText}
           onPress={() => navigation.navigate('Login')}>
           Login
         </Text>
@@ -108,7 +146,8 @@ const SignUp = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 50,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   logo: {
     height: themestyles.SCREEN_HEIGHT * 0.2,
@@ -118,7 +157,7 @@ const styles = StyleSheet.create({
   },
   formContainer: {
     backgroundColor: themestyles.COLOR_WHITE,
-    height: 400,
+    height: 380,
     width: '80%',
     borderRadius: 10,
     alignSelf: 'center',
@@ -163,6 +202,14 @@ const styles = StyleSheet.create({
   Register: {
     alignSelf: 'center',
     marginTop: 10,
+  },
+  button: {
+    marginTop: 28,
+  },
+  loginText: {
+    color: themestyles.PRIMARY,
+    textTransform: 'uppercase',
+    fontWeight: '600',
   },
 });
 export default SignUp;
