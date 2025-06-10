@@ -12,5 +12,12 @@ promotionBanner: require('./images/Promotion.png'),
 defaultUserIcon: require('./icons/defaultUserIcon.webp'),
 carouselImg1: require('./images/carouselImg1.png'),
 carouselImg2: require('./images/carouselImg2.png'),
+lambMealImg: require('./images/lamb.webp'),
+saladImg: require('./images/salad.png'),
+chickenMealImg: require('./images/chicken.jpeg'),
+beefMealImg: require('./images/beefImg.jpg'),
+burgerImg: require('./images/burgerIcon.png'),
+desertImg: require('./images/desert.jpeg'),
+iceCreamImg: require('./images/icecream.webp'),
 }
 export default images

@@ -12,14 +12,23 @@ import React, {useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
 
-import {ImageCard, SearchBar} from '../../component';
-import {useGetBurger, useGetSalad, useGetLambData} from '../../api/queries';
+import {CategoriesCard, ImageCard, SearchBar} from '../../component';
+import {
+  useGetBurger,
+  useGetSalad,
+  useGetLambData,
+  useGetChickenData,
+  useGetBeefData,
+  useGetDesertData,
+  useGetFishData,
+} from '../../api/queries';
 
 import themestyles from '../../assets/styles/themestyles';
 import images from '../../assets';
 import HomeSkeletonLoader from '../../component/home-skeleton-loader';
 
 type TProductProps = {
+  id?: number;
   imageUrl: string | number;
   title: string;
   price: string;
@@ -41,6 +50,10 @@ const Home = () => {
   const {data: allProducts, isLoading, error} = useGetBurger();
   const {data: saladData} = useGetSalad();
   const {data: lambData} = useGetLambData();
+  const {data: chickenData} = useGetChickenData();
+  const {data: beefData} = useGetBeefData();
+  const {data: desertData} = useGetDesertData();
+  const {data: fishData} = useGetFishData();
 
   const [expandDeserts, setExpandDeserts] = useState(false);
   const navigation = useNavigation<NavigationProps>();
@@ -49,6 +62,18 @@ const Home = () => {
     setExpandDeserts(expandDeserts => !expandDeserts);
   };
 
+  const categories = [
+    {id: 1, title: 'All'},
+    {id: 2, title: 'Lamb', image: images.lambMealImg},
+    {id: 3, title: 'Salad', image: images.saladImg},
+    {id: 4, title: 'Chicken', image: images.chickenMealImg},
+    {id: 5, title: 'Beef', image: images.beefMealImg},
+    {id: 6, title: 'Burger', image: images.burgerImg},
+    {id: 7, title: 'Desert', image: images.desertImg},
+    {id: 8, title: 'Ice-Cream', image: images.iceCreamImg},
+  ];
+
+  const handleCategorySelect = (item, index) => {};
   return (
     <>
       <ScrollView
@@ -69,9 +94,17 @@ const Home = () => {
               <Text style={styles.titleText}>Find Your Favourite Food</Text>
               <SearchBar />
               <Image source={images.promotionBanner} style={styles.banner} />
+              <View style={styles.categoryContainer}>
+                <Text style={styles.popularText}>Categories</Text>
+                <CategoriesCard
+                  items={categories}
+                  defaultSelectedIndex={0}
+                  onSelect={handleCategorySelect}
+                />
+              </View>
 
               <View style={styles.popularTextContainer}>
-                <Text style={styles.popularText}>Popular Menu</Text>
+                <Text style={styles.popularText}>Lamb Menu</Text>
                 <TouchableOpacity>
                   <Text style={styles.viewMoreText}>View More</Text>
                 </TouchableOpacity>
@@ -86,6 +119,7 @@ const Home = () => {
                 renderItem={({item}) => (
                   <View style={styles.imageCardContainer}>
                     <ImageCard
+                      id={item.idMeal}
                       title={item.strMeal}
                       imageUrl={item.strMealThumb}
                       description={item.strInstructions}
@@ -93,6 +127,7 @@ const Home = () => {
                       review={item.review}
                       onPress={() => {
                         navigation.navigate('ProductDetailScreen', {
+                          id: item.idMeal,
                           title: item.strMeal,
                           imageUrl: item.strMealThumb,
                           price: item.price,
@@ -131,6 +166,7 @@ const Home = () => {
                   renderItem={({item}) => (
                     <View style={styles.imageCardContainer}>
                       <ImageCard
+                        id={item.idMeal}
                         title={item.strMeal}
                         imageUrl={item.strMealThumb}
                         price={item.price}
@@ -139,6 +175,7 @@ const Home = () => {
                         review={item.review}
                         onPress={() => {
                           navigation.navigate('ProductDetailScreen', {
+                            id: item.idMeal,
                             title: item.strMeal,
                             imageUrl: item.strMealThumb,
                             price: item.price,
@@ -164,6 +201,7 @@ const Home = () => {
                   renderItem={({item}) => (
                     <View style={styles.imageCardContainer}>
                       <ImageCard
+                        id={item.idMeal}
                         title={item.strMeal}
                         imageUrl={item.strMealThumb}
                         price={item.price}
@@ -171,6 +209,7 @@ const Home = () => {
                         review={item.review}
                         onPress={() => {
                           navigation.navigate('ProductDetailScreen', {
+                            id: item.idMeal,
                             title: item.strMeal,
                             imageUrl: item.strMealThumb,
                             price: item.price,
@@ -179,6 +218,7 @@ const Home = () => {
                             time: item.time,
                             ingredients: item.ingredients,
                             foodArea: item.strArea,
+                            review: item.review,
                           });
                         }}
                       />
@@ -186,6 +226,165 @@ const Home = () => {
                   )}
                 />
               )}
+
+              <View style={styles.popularTextContainer}>
+                <Text style={styles.popularText}>Desert</Text>
+                <TouchableOpacity>
+                  <Text style={styles.viewMoreText}>View More</Text>
+                </TouchableOpacity>
+              </View>
+              <FlatList
+                horizontal
+                data={desertData}
+                showsHorizontalScrollIndicator={false}
+                keyExtractor={(item, index) => `popular-${index}`}
+                ItemSeparatorComponent={() => <View style={{width: 13}} />}
+                renderItem={({item}) => (
+                  <View style={styles.imageCardContainer}>
+                    <ImageCard
+                      id={item.idMeal}
+                      title={item.strMeal}
+                      imageUrl={item.strMealThumb}
+                      price={item.price}
+                      description={item.strInstructions}
+                      review={item.review}
+                      onPress={() => {
+                        navigation.navigate('ProductDetailScreen', {
+                          id: item.idMeal,
+                          title: item.strMeal,
+                          imageUrl: item.strMealThumb,
+                          price: item.price,
+                          description: item.strInstructions,
+                          calories: item.calories,
+                          time: item.time,
+                          review: item.review,
+                          ingredients: item.ingredients,
+                          foodArea: item.strArea,
+                        });
+                      }}
+                    />
+                  </View>
+                )}
+              />
+
+              <View style={styles.popularTextContainer}>
+                <Text style={styles.popularText}>Chicken Menu</Text>
+                <TouchableOpacity>
+                  <Text style={styles.viewMoreText}>View More</Text>
+                </TouchableOpacity>
+              </View>
+              <FlatList
+                horizontal
+                data={chickenData}
+                showsHorizontalScrollIndicator={false}
+                keyExtractor={(item, index) => `popular-${index}`}
+                ItemSeparatorComponent={() => <View style={{width: 13}} />}
+                renderItem={({item}) => (
+                  <View style={styles.imageCardContainer}>
+                    <ImageCard
+                      id={item.idMeal}
+                      title={item.strMeal}
+                      imageUrl={item.strMealThumb}
+                      price={item.price}
+                      description={item.strInstructions}
+                      review={item.review}
+                      onPress={() => {
+                        navigation.navigate('ProductDetailScreen', {
+                          id: item.idMeal,
+                          title: item.strMeal,
+                          imageUrl: item.strMealThumb,
+                          price: item.price,
+                          description: item.strInstructions,
+                          calories: item.calories,
+                          time: item.time,
+                          review: item.review,
+                          ingredients: item.ingredients,
+                          foodArea: item.strArea,
+                        });
+                      }}
+                    />
+                  </View>
+                )}
+              />
+              <View style={styles.popularTextContainer}>
+                <Text style={styles.popularText}>Fish Menu</Text>
+                <TouchableOpacity>
+                  <Text style={styles.viewMoreText}>View More</Text>
+                </TouchableOpacity>
+              </View>
+              <FlatList
+                horizontal
+                data={fishData}
+                showsHorizontalScrollIndicator={false}
+                keyExtractor={(item, index) => `popular-${index}`}
+                ItemSeparatorComponent={() => <View style={{width: 13}} />}
+                renderItem={({item}) => (
+                  <View style={styles.imageCardContainer}>
+                    <ImageCard
+                      id={item.idMeal}
+                      title={item.strMeal}
+                      imageUrl={item.strMealThumb}
+                      price={item.price}
+                      description={item.strInstructions}
+                      review={item.review}
+                      onPress={() => {
+                        navigation.navigate('ProductDetailScreen', {
+                          id: item.idMeal,
+                          title: item.strMeal,
+                          imageUrl: item.strMealThumb,
+                          price: item.price,
+                          description: item.strInstructions,
+                          calories: item.calories,
+                          time: item.time,
+                          review: item.review,
+                          ingredients: item.ingredients,
+                          foodArea: item.strArea,
+                        });
+                      }}
+                    />
+                  </View>
+                )}
+              />
+
+              <View style={styles.popularTextContainer}>
+                <Text style={styles.popularText}>Beef Menu</Text>
+                <TouchableOpacity>
+                  <Text style={styles.viewMoreText}>View More</Text>
+                </TouchableOpacity>
+              </View>
+              <FlatList
+                horizontal
+                data={beefData}
+                showsHorizontalScrollIndicator={false}
+                keyExtractor={(item, index) => `popular-${index}`}
+                ItemSeparatorComponent={() => <View style={{width: 13}} />}
+                renderItem={({item}) => (
+                  <View style={styles.imageCardContainer}>
+                    <ImageCard
+                      id={item.idMeal}
+                      title={item.strMeal}
+                      imageUrl={item.strMealThumb}
+                      price={item.price}
+                      description={item.strInstructions}
+                      review={item.review}
+                      onPress={() => {
+                        navigation.navigate('ProductDetailScreen', {
+                          id: item.idMeal,
+                          title: item.strMeal,
+                          imageUrl: item.strMealThumb,
+                          price: item.price,
+                          description: item.strInstructions,
+                          calories: item.calories,
+                          time: item.time,
+                          review: item.review,
+                          ingredients: item.ingredients,
+                          foodArea: item.strArea,
+                        });
+                      }}
+                    />
+                  </View>
+                )}
+              />
 
               <View style={styles.popularTextContainer}>
                 <Text style={styles.popularText}>Burger Menu</Text>
@@ -202,6 +401,7 @@ const Home = () => {
                 renderItem={({item}) => (
                   <View style={styles.imageCardContainer}>
                     <ImageCard
+                      id={item.idMeal}
                       title={item.strMeal}
                       imageUrl={item.strMealThumb}
                       price={item.price}
@@ -209,10 +409,11 @@ const Home = () => {
                       review={item.review}
                       onPress={() => {
                         navigation.navigate('ProductDetailScreen', {
+                          id: item.idMeal,
                           title: item.strMeal,
                           imageUrl: item.strMealThumb,
                           price: item.price,
-                          description: item.description,
+                          description: item.strInstructions,
                           calories: item.calories,
                           time: item.time,
                           review: item.review,
@@ -272,9 +473,12 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     marginTop: 20,
   },
+  categoryContainer: {
+    marginTop: 10,
+  },
   popularText: {
     fontSize: 17,
-    fontWeight: '500',
+    fontWeight: '700',
   },
   viewMoreText: {
     fontSize: 11,

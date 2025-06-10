@@ -87,6 +87,13 @@ const Profile = () => {
       onPress: () => {},
     },
     {
+      id: 6,
+      title: 'WishList',
+      image: <Icon name="favorite" size={28} />,
+      onPress: () => {
+      },
+    },
+    {
       id: 5,
       title: 'Sign Out',
       image: <Icon name="logout" size={28} color={'red'} />,
@@ -134,7 +141,7 @@ const Profile = () => {
 
   return (
     <View style={styles.container}>
-      <Header title="Profile" gap={25} />
+      <Header title="Profile" fontWeight={'600'}/>
       <TouchableOpacity activeOpacity={0.7} onPress={() => {}}>
         <Image source={images.defaultUserIcon} style={styles.icon} />
       </TouchableOpacity>

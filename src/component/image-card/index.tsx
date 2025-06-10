@@ -3,6 +3,7 @@ import React from 'react';
 import themestyles from '../../assets/styles/themestyles';
 
 type Props = {
+  id?: number;
   imageUrl?: string | number;
   title: string;
   description?: string;
@@ -12,6 +13,7 @@ type Props = {
   onPress?: () => void;
 };
 const ImageCard = ({
+  id,
   imageUrl,
   title,
   price,
@@ -20,20 +22,21 @@ const ImageCard = ({
   calories,
   onPress,
 }: Props) => {
+
   const isRemote = typeof imageUrl === 'string'; // ye is liye use kiya h mtlb agr link h means uri h tu {uri:imageUri} use hoga oor agr require('/assets/image.....') is tra image h tu imageUri simple use hoga
   return (
     <TouchableOpacity
       style={styles.imageCardContainer}
       onPress={onPress}
-      activeOpacity={0.7}>
+      activeOpacity={0.5}>
       <Image
         resizeMode="cover"
         source={isRemote ? {uri: imageUrl} : imageUrl}
         style={styles.image}
       />
-      <View style={{paddingHorizontal: 5}}>
+      <View style={styles.detailRow}>
         <Text style={styles.title}>{title.substring(0, 15) + '...'}</Text>
-        <Text style={styles.description}>
+        <Text style={styles.description} numberOfLines={1}>
           {description?.substring(0, 20) + '...'}
         </Text>
         <Text style={styles.price}>⭐{review}</Text>
@@ -47,7 +50,6 @@ export default ImageCard;
 
 const styles = StyleSheet.create({
   imageCardContainer: {
-    // height: 150,
     width: themestyles.SCREEN_WIDTH * 0.4,
     borderRadius: 7,
     backgroundColor: themestyles.SECONDARY,
@@ -57,7 +59,6 @@ const styles = StyleSheet.create({
     shadowRadius: 2,
     elevation: 4,
     marginVertical: 5,
-    // paddingVertical: 10,
   },
   image: {
     height: 100,
@@ -70,12 +71,10 @@ const styles = StyleSheet.create({
     paddingLeft: 5,
     marginTop: 5,
     fontWeight: '500',
-    // alignSelf: 'center',
   },
   price: {
     fontSize: 13,
     fontWeight: '700',
-    // alignSelf: 'center',
     marginTop: 5,
     marginLeft: 5,
   },
@@ -86,5 +85,11 @@ const styles = StyleSheet.create({
     marginTop: 5,
     fontWeight: '300',
     color: themestyles.DARK_GREY3,
+  },
+  detailRow: {
+    paddingHorizontal: 5,
+    flexDirection: 'column',
+    gap: 1.5,
+    paddingVertical: 3,
   },
 });

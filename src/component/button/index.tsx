@@ -37,7 +37,7 @@ const Button = ({
           isOutline ? styles.outline : styles.solid,
         ]}
         onPress={onPress}
-        activeOpacity={0.7}>
+        activeOpacity={0.5}>
         {isLoading ? (
           <Loader loading color='white'/>
         ) : (

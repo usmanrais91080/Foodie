@@ -13,6 +13,8 @@ import Cart from "./cart";
 import Chat from "./chat";
 import Carousel from "./carousel-screen";
 import ProductDetailScreen from "./product-detail-screen";
+import ConfirmOrder from "./confirm-order";
+import ConversationScreen from "./conversation-screen";
 
 export {
   Login,
@@ -29,5 +31,7 @@ export {
   Cart,
   Chat,
   Carousel,
-  ProductDetailScreen
+  ProductDetailScreen,
+  ConfirmOrder,
+  ConversationScreen,
 };

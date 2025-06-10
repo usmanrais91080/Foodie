@@ -1,19 +1,15 @@
 import React from 'react';
-import {
-  StyleSheet,
-  TouchableOpacity,
-  View,
-  Platform,
-} from 'react-native';
+import {StyleSheet, TouchableOpacity, View, Platform, Text} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import themestyles from '../assets/styles/themestyles';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import useCartStore from '../stores/useCartStore';
 
-const CustomBottomTab = ({ state, navigation }: any) => {
+const CustomBottomTab = ({state, navigation}: any) => {
   const insets = useSafeAreaInsets();
 
   return (
-    <View style={[styles.container, { paddingBottom: insets.bottom }]}>
+    <View style={[styles.container, {paddingBottom: insets.bottom}]}>
       {state.routes.map((route: any, index: any) => {
         const isFocused = state.index === index;
 
@@ -31,6 +27,8 @@ const CustomBottomTab = ({ state, navigation }: any) => {
             navigation.navigate(route.name);
           }
         };
+        const {cart} = useCartStore();
+        const addedItemInCart = cart.length;
 
         return (
           <TouchableOpacity
@@ -42,6 +40,29 @@ const CustomBottomTab = ({ state, navigation }: any) => {
               size={30}
               color={isFocused ? themestyles.PRIMARY : themestyles.COLOR_WHITE}
             />
+            {route.name === 'Cart' && addedItemInCart > 0 ? (
+              <View
+                style={[
+                  styles.badge,
+                  {
+                    backgroundColor: isFocused
+                      ? themestyles.PRIMARY
+                      : themestyles.COLOR_WHITE,
+                  },
+                ]}>
+                <Text
+                  style={[
+                    styles.badgeText,
+                    {
+                      color: isFocused
+                        ? themestyles.COLOR_WHITE
+                        : themestyles.PRIMARY,
+                    },
+                  ]}>
+                  {addedItemInCart}
+                </Text>
+              </View>
+            ) : null}
           </TouchableOpacity>
         );
       })}
@@ -64,7 +85,7 @@ const styles = StyleSheet.create({
   },
   tab: {
     alignItems: 'center',
-    top:Platform.OS==='ios'?8:2
+    top: Platform.OS === 'ios' ? 8 : 2,
   },
   tabBg: {
     height: 40,
@@ -73,5 +94,21 @@ const styles = StyleSheet.create({
     backgroundColor: themestyles.COLOR_WHITE,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  badge: {
+    position: 'absolute',
+    backgroundColor: themestyles.PRIMARY,
+    width: 15,
+    height: 15,
+    alignItems: 'center',
+    justifyContent: 'center',
+    right: 1,
+    top: 1,
+    borderRadius: 20,
+  },
+  badgeText: {
+    color: '#fff',
+    fontSize: 10,
+    fontWeight: 'bold',
   },
 });

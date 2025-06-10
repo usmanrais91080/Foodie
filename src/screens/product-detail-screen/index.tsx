@@ -1,5 +1,4 @@
 import {
-  Image,
   ScrollView,
   StyleSheet,
   Text,
@@ -8,7 +7,7 @@ import {
 } from 'react-native';
 import React, {useState} from 'react';
 import {RouteProp, useRoute} from '@react-navigation/native';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import * as Animatable from 'react-native-animatable';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
 
 import {MainStackParamList} from '../home';
@@ -17,6 +16,7 @@ import ProdIngredients from './product-ingredients';
 import ProductDesc from './product-descriptio';
 import ProductHeader from '../../component/header/product-header';
 import {Button} from '../../component';
+import useCartStore from '../../stores/useCartStore';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -57,6 +57,8 @@ const ProductDetailScreen = () => {
     foodArea,
   } = route.params;
 
+  const addToCart = useCartStore(state => state.addToCart);
+
   const DESCRIPTION_TEXT_LIMIT = 220;
 
   const toggleViewMore = () => {
@@ -69,36 +71,91 @@ const ProductDetailScreen = () => {
     ? `${description.slice(0, DESCRIPTION_TEXT_LIMIT)}...`
     : description;
 
+  const handleAddToCart = () => {
+    if (!route.params?.id) {
+      console.warn('Missing product ID. Cannot add to cart.');
+      return;
+    }
+    addToCart({
+      id: route.params.id,
+      image: {uri: route.params.imageUrl},
+      name: route.params.title,
+      description: route.params.description,
+      price: route.params.price,
+      quantity: 1,
+    });
+  };
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={{paddingBottom: 20}}>
         <View style={styles.imageAndIconContainer}>
-          <Image source={{uri: imageUrl}} style={styles.image} />
+          <Animatable.Image
+            source={{uri: imageUrl}}
+            style={styles.image}
+            duration={1100}
+            animation={'zoomIn'}
+          />
           <View style={styles.headerContainer}>
             <ProductHeader />
           </View>
         </View>
 
         <View style={styles.itemDetailsContainer}>
-          <View style={styles.titlePrice}>
+          <Animatable.View
+            style={styles.titlePrice}
+            duration={1200}
+            animation={'slideInUp'}>
             <Text style={styles.title}>{title}</Text>
             <Text style={styles.price}>${price}</Text>
-          </View>
-          <Text style={styles.foodArea}>({foodArea})</Text>
+          </Animatable.View>
+          <Animatable.Text
+            style={styles.foodArea}
+            duration={1300}
+            animation={'slideInUp'}>
+            ({foodArea})
+          </Animatable.Text>
 
-          <View style={styles.detailsRowStyle}>
+          <Animatable.View
+            style={styles.detailsRowStyle}
+            duration={1400}
+            animation={'slideInUp'}>
             <View style={styles.itemBg}>
-              <Text style={styles.review}>⭐ {review}</Text>
+              <Animatable.Text
+                style={styles.review}
+                duration={1500}
+                animation={'slideInUp'}>
+                ⭐ {review}
+              </Animatable.Text>
             </View>
             <View style={styles.itemBg}>
-              <Text style={styles.review}>🔥 {calories} Calories</Text>
+              <Animatable.Text
+                style={styles.review}
+                duration={1700}
+                animation={'slideInUp'}>
+                🔥 {calories} Calories
+              </Animatable.Text>
             </View>
             <View style={styles.itemBg}>
-              <Text style={styles.review}>⏰ {time} Mins</Text>
+              <Animatable.Text
+                style={styles.review}
+                duration={1900}
+                animation={'slideInUp'}>
+                ⏰ {time} Mins
+              </Animatable.Text>
             </View>
-          </View>
-          <Text style={styles.instructionText}>Instruction</Text>
-          <Text style={styles.description}>{displayDescription}</Text>
+          </Animatable.View>
+          <Animatable.Text
+            style={styles.instructionText}
+            duration={1400}
+            animation={'fadeInLeft'}>
+            Instruction
+          </Animatable.Text>
+          <Animatable.Text
+            style={styles.description}
+            duration={1500}
+            animation={'fadeInLeft'}>
+            {displayDescription}
+          </Animatable.Text>
           {description?.length > DESCRIPTION_TEXT_LIMIT && (
             <TouchableOpacity onPress={toggleViewMore}>
               <Text style={styles.viewMoreText}>
@@ -108,21 +165,38 @@ const ProductDetailScreen = () => {
           )}
 
           {/* ingredients */}
-          <Text style={styles.instructionText}>Ingredients</Text>
-          <View style={styles.ingredientsContainer}>
+          <Animatable.Text
+            style={styles.instructionText}
+            duration={1400}
+            animation={'fadeInLeft'}>
+            Ingredients
+          </Animatable.Text>
+          <Animatable.View
+            style={styles.ingredientsContainer}
+            duration={1400}
+            animation={'slideInUp'}>
             {Array.isArray(ingredients) ? (
               ingredients.map((item, index) => (
                 <View key={index} style={styles.itemsBg}>
-                  <Text style={styles.review}>{item.ingredient}</Text>
-                  <Text key={index} style={styles.review}>
+                  <Animatable.Text
+                    style={styles.review}
+                    duration={1700}
+                    animation={'slideInUp'}>
+                    {item.ingredient}
+                  </Animatable.Text>
+                  <Animatable.Text
+                    key={index}
+                    style={styles.review}
+                    duration={1900}
+                    animation={'slideInUp'}>
                     {item.measure}
-                  </Text>
+                  </Animatable.Text>
                 </View>
               ))
             ) : (
               <Text style={{color: 'red'}}>No ingredients found</Text>
             )}
-          </View>
+          </Animatable.View>
         </View>
       </ScrollView>
       <View style={styles.buttonContainer}>
@@ -130,14 +204,14 @@ const ProductDetailScreen = () => {
           title="Add to Cart"
           variant="outline"
           style={styles.button}
+          onPress={handleAddToCart}
         />
+
         <Button title="Order Now" style={styles.button} />
       </View>
     </View>
   );
 };
-
-export default ProductDetailScreen;
 
 const styles = StyleSheet.create({
   container: {
@@ -244,9 +318,11 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 5,
-    marginLeft:15
+    marginLeft: 15,
   },
   button: {
     width: '90%',
   },
 });
+
+export default ProductDetailScreen;

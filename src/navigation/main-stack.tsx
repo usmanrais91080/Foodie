@@ -1,6 +1,8 @@
 import {createStackNavigator} from '@react-navigation/stack';
 import BioScreen from '../screens/bio';
 import {
+  ConfirmOrder,
+  ConversationScreen,
   GoogleMapScreen,
   Location,
   PaymentScreen,
@@ -24,7 +26,12 @@ const MainStack = () => {
       <Stack.Screen name="ProfileIsReady" component={ProfileIsReady} /> */}
       <Stack.Screen name="GoogleMapScreen" component={GoogleMapScreen} />
       <Stack.Screen name="Search" component={Search} />
-      <Stack.Screen name="ProductDetailScreen" component={ProductDetailScreen} />
+      <Stack.Screen
+        name="ProductDetailScreen"
+        component={ProductDetailScreen}
+      />
+      <Stack.Screen name="ConfirmOrder" component={ConfirmOrder} />
+      <Stack.Screen name="ConversationScreen" component={ConversationScreen} />
     </Stack.Navigator>
   );
 };
