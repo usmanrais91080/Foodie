@@ -46,7 +46,6 @@ const ImageCard = ({
   );
 };
 
-export default ImageCard;
 
 const styles = StyleSheet.create({
   imageCardContainer: {
@@ -93,3 +92,5 @@ const styles = StyleSheet.create({
     paddingVertical: 3,
   },
 });
+
+export default ImageCard;

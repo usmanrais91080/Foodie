@@ -8,7 +8,7 @@ import {
 import React, {useState} from 'react';
 import themestyles from '../../assets/styles/themestyles';
 
-type TCategoryItem = {
+export type TCategoryItem = {
   id: number;
   title: string;
   image?: any; 
