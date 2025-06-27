@@ -211,9 +211,10 @@ export const asyncGetChickenMeal = async () => {
 
     return chickenPrice || [];
   } catch (error) {
-    console.log('Error fetching lamb data', error);
+    console.log('Error fetching chicken data', error);
   }
 };
+
 export const asyncGetDesert = async () => {
   try {
     const response = await axios.get(`${BASE_URL}/search.php?s=cake`);
@@ -263,7 +264,84 @@ export const asyncGetDesert = async () => {
 
     return chickenPrice || [];
   } catch (error) {
-    console.log('Error fetching lamb data', error);
+    console.log('Error fetching desert data', error);
+  }
+};
+
+export const asyncGetSoup = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/search.php?s=soup`);
+    const soupPrice = response.data?.meals?.map((meal: any) => {
+      let price;
+      let review;
+      let calories;
+      const time = Math.floor(Math.random() * (60 - 10 + 1)) + 10;
+      const ingredients = extractIngredients(meal);
+
+      if (meal.strArea === 'Tunisian') {
+        price = 33.99;
+        review = 4.89;
+        calories = 200;
+      } else if (meal.strArea === 'Jamaican') {
+        price = 19.33;
+        review = 4.36;
+        calories = 290;
+      } else if (meal.strArea === 'Chinese') {
+        price = 22.33;
+        review = 4.66;
+        calories = 210;
+      } else if (meal.strArea === 'Canadian') {
+        price = 11.33;
+        review = 3.66;
+        calories = 300;
+      } else if (meal.strArea === 'Russian') {
+        price = 12.33;
+        review = 3.66;
+        calories = 280;
+      } else if (meal.strArea === 'Ukrainian') {
+        price = 22.33;
+        review = 4.66;
+        calories = 210;
+      } else if (meal.strArea === 'French') {
+        price = 19.33;
+        review = 4.36;
+        calories = 290;
+      } else if (meal.strArea === 'Polish') {
+        price = 9.33;
+        review = 2.36;
+        calories = 590;
+      } else if (meal.strArea === 'Moroccan') {
+        price = 22.8;
+        review = 4.0;
+        calories = 240;
+      } else if (meal.strArea === 'Dutch') {
+        price = 13.8;
+        review = 4.55;
+        calories = 340;
+      } else if (meal.strArea === 'American') {
+        price = 9.99;
+        review = 2.36;
+        calories = 410;
+      } else if (meal.strArea === 'Croatian') {
+        price = 4.33;
+        review = 4.16;
+        calories = 190;
+      } else if (meal.strArea === 'British') {
+        price = 15.33;
+        review = 4.36;
+        calories = 390;
+      } else {
+        price = Math.floor(Math.random() * 20) + 1;
+        review = parseFloat((Math.random() * 1.3 + 3.5).toFixed(1));
+        calories = Math.floor(Math.random() * (500 - 200 + 1)) + 200;
+      }
+
+      return {...meal, price, review, calories, time, ingredients};
+    });
+
+    return soupPrice || [];
+  } catch (error) {
+    console.log('Error fetching soup data', error);
   }
 };
 
@@ -336,9 +414,10 @@ export const asyncGetBeefMeal = async () => {
 
     return chickenPrice || [];
   } catch (error) {
-    console.log('Error fetching lamb data', error);
+    console.log('Error fetching beef data', error);
   }
 };
+
 export const asyncGetFishMeal = async () => {
   try {
     const response = await axios.get(`${BASE_URL}/search.php?s=fish`);
@@ -392,7 +471,111 @@ export const asyncGetFishMeal = async () => {
 
     return chickenPrice || [];
   } catch (error) {
-    console.log('Error fetching lamb data', error);
+    console.log('Error fetching fish data', error);
+  }
+};
+
+export const asyncGetChoc0late = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/search.php?s=chocolate`);
+    const chocolatePrice = response.data?.meals?.map((meal: any) => {
+      let price;
+      let review;
+      let calories;
+      const time = Math.floor(Math.random() * (60 - 10 + 1)) + 10;
+      const ingredients = extractIngredients(meal);
+
+      if (meal.strArea === 'American') {
+        price = 13.99;
+        review = 4.89;
+        calories = 200;
+      } else if (meal.strArea === 'British') {
+        price = 15.33;
+        review = 4.36;
+        calories = 390;
+      } else if (meal.strArea === 'French') {
+        price = 9.99;
+        review = 4.3;
+        calories = 300;
+      } else {
+        price = Math.floor(Math.random() * 20) + 1;
+        review = parseFloat((Math.random() * 1.3 + 3.5).toFixed(1));
+        calories = Math.floor(Math.random() * (500 - 200 + 1)) + 200;
+      }
+
+      return {...meal, price, review, calories, time, ingredients};
+    });
+
+    return chocolatePrice || [];
+  } catch (error) {
+    console.log('Error fetching choclate data', error);
+  }
+};
+
+export const asyncGetCategories = async () => {
+  try {
+    const responce = await axios.get(`${BASE_URL}/categories.php`);
+    return responce?.data.categories ?? [];
+  } catch (error) {
+    console.log('Error fetching categories', error);
+    return [];
+  }
+};
+
+export const asyncGetMealByCategory = async (category: string) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/filter.php?c=${category}`);
+    return response.data?.meals
+      ? response.data?.meals.map((meal: any) => {
+          let price;
+          let review;
+          let calories;
+          const time = Math.floor(Math.random() * (60 - 10 + 1)) + 10;
+          const ingredients = extractIngredients(meal);
+
+          if (meal.strArea === 'Portuguese') {
+            price = 13.99;
+            review = 4.89;
+            calories = 200;
+          } else if (meal.strArea === 'Jamaican') {
+            price = 19.33;
+            review = 4.36;
+            calories = 290;
+          } else if (meal.strArea === 'Russian') {
+            price = 22.8;
+            review = 4.0;
+            calories = 240;
+          } else if (meal.strArea === 'Mexican') {
+            price = 13.93;
+            review = 3.36;
+            calories = 190;
+          } else if (meal.strArea === 'American') {
+            price = 9.99;
+            review = 2.36;
+            calories = 410;
+          } else if (meal.strArea === 'Indian') {
+            price = 5.66;
+            review = 3.36;
+            calories = 440;
+          } else if (meal.strArea === 'British') {
+            price = 15.33;
+            review = 4.36;
+            calories = 390;
+          } else if (meal.strArea === 'French') {
+            price = 9.99;
+            review = 4.3;
+            calories = 300;
+          } else {
+            price = Math.floor(Math.random() * 20) + 1;
+            review = parseFloat((Math.random() * 1.3 + 3.5).toFixed(1));
+            calories = Math.floor(Math.random() * (500 - 200 + 1)) + 200;
+          }
+
+          return {...meal, price, review, calories, time, ingredients};
+        })
+      : [];
+  } catch (error) {
+    console.log('Error fetching meals by category:', error);
   }
 };
 

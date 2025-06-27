@@ -121,9 +121,9 @@ const styles = StyleSheet.create({
     // width: '50%',
   },
   button: {
-    width: '30%',
+    width: '50%',
     position: 'absolute',
-    right: 20,
+    right: -themestyles.SCREEN_HEIGHT * 0.2,
     bottom: -themestyles.SCREEN_HEIGHT * 0.16,
   },
 });

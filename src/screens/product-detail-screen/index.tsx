@@ -20,25 +20,25 @@ import useCartStore from '../../stores/useCartStore';
 
 const Tab = createMaterialTopTabNavigator();
 
-const TopTab = () => {
-  return (
-    <Tab.Navigator
-      screenOptions={{
-        tabBarActiveTintColor: '#e91e63',
-        tabBarInactiveTintColor: '#666',
-        tabBarLabelStyle: {fontSize: 12, fontWeight: 'bold'},
-        tabBarStyle: {backgroundColor: '#fff'},
-        tabBarIndicatorStyle: {backgroundColor: '#e91e63'},
-      }}>
-      <Tab.Screen name="ProductDesc" options={{tabBarLabel: 'Description'}}>
-        {() => <ProductDesc />}
-      </Tab.Screen>
-      <Tab.Screen name="ProdIngredients" options={{tabBarLabel: 'Ingredients'}}>
-        {() => <ProdIngredients />}
-      </Tab.Screen>
-    </Tab.Navigator>
-  );
-};
+// const TopTab = () => {
+//   return (
+//     <Tab.Navigator
+//       screenOptions={{
+//         tabBarActiveTintColor: '#e91e63',
+//         tabBarInactiveTintColor: '#666',
+//         tabBarLabelStyle: {fontSize: 12, fontWeight: 'bold'},
+//         tabBarStyle: {backgroundColor: '#fff'},
+//         tabBarIndicatorStyle: {backgroundColor: '#e91e63'},
+//       }}>
+//       <Tab.Screen name="ProductDesc" options={{tabBarLabel: 'Description'}}>
+//         {() => <ProductDesc />}
+//       </Tab.Screen>
+//       <Tab.Screen name="ProdIngredients" options={{tabBarLabel: 'Ingredients'}}>
+//         {() => <ProdIngredients />}
+//       </Tab.Screen>
+//     </Tab.Navigator>
+//   );
+// };
 
 type ProductDetailProps = RouteProp<MainStackParamList, 'ProductDetailScreen'>;
 
@@ -67,7 +67,7 @@ const ProductDetailScreen = () => {
 
   const displayDescription = viewMore
     ? description
-    : description.length > DESCRIPTION_TEXT_LIMIT
+    : description?.length > DESCRIPTION_TEXT_LIMIT
     ? `${description.slice(0, DESCRIPTION_TEXT_LIMIT)}...`
     : description;
 
